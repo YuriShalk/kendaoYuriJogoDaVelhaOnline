@@ -84,6 +84,12 @@ class GameController extends Controller
                 return response("invalid request body", 400);
             }
 
+            $owner = Account::find($bodyContent->id_owner);
+
+            if (!$owner) {
+                return response("owner not found", 422);
+            }
+
             $random_value = rand(0, 1);
 
             $game = new Game();
@@ -91,14 +97,13 @@ class GameController extends Controller
             $game->turn = ($random_value == 1 ? 'OWNER' : 'GUEST');
             $game->save();
 
-            // if ($game->id_owner) {
-                $owner = Account::find($game->id_owner);
-                unset($owner->id);
-                unset($owner->password);
+            // set and hide values
 
-                $game['owner'] = $owner;
-                unset($game->id_owner);
-            // }
+            unset($owner->id);
+            unset($owner->password);
+
+            $game['owner'] = $owner;
+            unset($game->id_owner);
 
             return response($game, 201);
         } catch (\Exception $e) {
@@ -129,6 +134,12 @@ class GameController extends Controller
             }
 
             if (property_exists($bodyContent, 'id_guest')) {
+                $guest = Account::find($bodyContent->id_guest);
+
+                if (!$guest) {
+                    return response("guest not found", 422);
+                }
+
                 $game->id_guest = $bodyContent->id_guest;
             }
 
@@ -146,7 +157,9 @@ class GameController extends Controller
             }
 
             if ($game->id_guest) {
-                $guest = Account::find($game->id_guest);
+                if (!$guest) {
+                    $guest = Account::find($game->id_guest);
+                }
                 unset($guest->id);
                 unset($guest->password);
 

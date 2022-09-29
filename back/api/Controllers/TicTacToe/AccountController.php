@@ -67,9 +67,6 @@ class AccountController extends Controller
             }
             $account->save();
 
-            // set uuid again
-            $account->id = $new_id;
-
             return response($account, 201);
         } catch (\Exception $e) {
             return response("error: " . $e->getMessage(), 500);

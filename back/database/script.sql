@@ -15,9 +15,9 @@ CREATE TABLE `tictactoe_account` (
 
 CREATE TABLE `tictactoe_game` (
   `id` int(12) NOT NULL primary key auto_increment,
-  `id_owner` int(12) NOT NULL,
-  `id_guest` int(12),
-  `id_winner` int(12),
+  `id_owner` varchar(36) NOT NULL,
+  `id_guest` varchar(36),
+  `id_winner` varchar(36),
   `first_position` ENUM('X', 'O'),
   `second_position` ENUM('X', 'O'),
   `third_position` ENUM('X', 'O'),
@@ -39,5 +39,5 @@ CREATE TABLE `tictactoe_game` (
 -- index
 
 CREATE INDEX `idx_tictactoe_game_status` ON `tictactoe_game` (`status`);
-CREATE INDEX `idx_tictactoe_game_status_and_owner` ON `tictactoe_game` (`status`, `owner`);
-CREATE INDEX `idx_tictactoe_game_status_and_guest` ON `tictactoe_game` (`status`, `guest`);
+CREATE INDEX `idx_tictactoe_game_status_and_id_owner` ON `tictactoe_game` (`status`, `id_owner`);
+CREATE INDEX `idx_tictactoe_game_status_and_id_guest` ON `tictactoe_game` (`status`, `id_guest`);
