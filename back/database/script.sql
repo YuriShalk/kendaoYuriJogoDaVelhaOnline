@@ -35,3 +35,9 @@ CREATE TABLE `tictactoe_game` (
   FOREIGN KEY (`id_guest`) REFERENCES `tictactoe_account` (`id`),
   FOREIGN KEY (`id_winner`) REFERENCES `tictactoe_account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- index
+
+CREATE INDEX `idx_tictactoe_game_status` ON `tictactoe_game` (`status`);
+CREATE INDEX `idx_tictactoe_game_status_and_owner` ON `tictactoe_game` (`status`, `owner`);
+CREATE INDEX `idx_tictactoe_game_status_and_guest` ON `tictactoe_game` (`status`, `guest`);

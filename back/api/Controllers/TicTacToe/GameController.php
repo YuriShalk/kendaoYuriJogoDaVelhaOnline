@@ -19,12 +19,47 @@ class GameController extends Controller
 
             if ($request->id) {
                 $game = Game::find($request->id);
+            } else if ($request->id_player) {
+                $game = Game::where('status', '!=', 'DONE')->where('id_owner', '=', $request->id_player)->first();
+
+                if (!$game) {
+                    $game = Game::where('status', '!=', 'DONE')->where('id_guest', '=', $request->id_player)->first();
+                }
             } else {
                 return response("invalid parameters", 400);
             }
 
             if (!$game) {
                 return response("game not found", 404);
+            }
+
+            // set and hide values
+
+            if ($game->id_owner) {
+                $owner = Account::find($game->id_owner);
+                unset($owner->id);
+                unset($owner->password);
+
+                $game['owner'] = $owner;
+                unset($game->id_owner);
+            }
+
+            if ($game->id_guest) {
+                $guest = Account::find($game->id_guest);
+                unset($guest->id);
+                unset($guest->password);
+
+                $game['guest'] = $guest;
+                unset($game->id_guest);
+            }
+
+            if ($game->id_winner) {
+                $winner = Account::find($game->id_winner);
+                unset($winner->id);
+                unset($winner->password);
+
+                $game['winner'] = $winner;
+                unset($game->id_winner);
             }
 
             return response($game, 200);
@@ -55,6 +90,15 @@ class GameController extends Controller
             $game->id_owner = $bodyContent->id_owner;
             $game->turn = ($random_value == 1 ? 'OWNER' : 'GUEST');
             $game->save();
+
+            // if ($game->id_owner) {
+                $owner = Account::find($game->id_owner);
+                unset($owner->id);
+                unset($owner->password);
+
+                $game['owner'] = $owner;
+                unset($game->id_owner);
+            // }
 
             return response($game, 201);
         } catch (\Exception $e) {
@@ -89,6 +133,35 @@ class GameController extends Controller
             }
 
             $game->save();
+
+            // set and hide values
+
+            if ($game->id_owner) {
+                $owner = Account::find($game->id_owner);
+                unset($owner->id);
+                unset($owner->password);
+
+                $game['owner'] = $owner;
+                unset($game->id_owner);
+            }
+
+            if ($game->id_guest) {
+                $guest = Account::find($game->id_guest);
+                unset($guest->id);
+                unset($guest->password);
+
+                $game['guest'] = $guest;
+                unset($game->id_guest);
+            }
+
+            if ($game->id_winner) {
+                $winner = Account::find($game->id_winner);
+                unset($winner->id);
+                unset($winner->password);
+
+                $game['winner'] = $winner;
+                unset($game->id_winner);
+            }
 
             return response($game, 200);
         } catch (\Exception $e) {
