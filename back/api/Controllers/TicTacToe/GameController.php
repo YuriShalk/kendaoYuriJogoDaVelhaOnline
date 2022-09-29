@@ -19,13 +19,13 @@ class GameController extends Controller
 
             if ($request->id) {
                 $game = Game::find($request->id);
-            } else if ($request->id_player) {
+            } /* else if ($request->id_player) { // player can be in more than one game at the same time
                 $game = Game::where('status', '!=', 'DONE')->where('id_owner', '=', $request->id_player)->first();
 
                 if (!$game) {
                     $game = Game::where('status', '!=', 'DONE')->where('id_guest', '=', $request->id_player)->first();
                 }
-            } else {
+            } */ else {
                 return response("invalid parameters", 400);
             }
 
@@ -139,6 +139,8 @@ class GameController extends Controller
             }
 
             if (property_exists($bodyContent, 'id_guest')) {
+                // when guest enter in the room
+
                 if ($bodyContent->id_guest == $game->id_owner) {
                     return response("guest is equals to owner", 422);
                 }
@@ -151,6 +153,35 @@ class GameController extends Controller
 
                 $game->id_guest = $bodyContent->id_guest;
                 $game->status = 'STARTED';
+            } else if ($request->player_id) {
+                // when player marks X or O
+
+                if ($game->status != 'STARTED') {
+                    return response("game is not started", 422);
+                }
+
+                if ($request->player_id == $game->id_owner) { // when is the owner
+                    if ($game->turn != 'OWNER') {
+                        return response("invalid turn", 422);
+                    }
+
+                    $player = Account::find($game->id_owner);
+                } else if ($request->player_id == $game->id_guest) { // when is the guest
+                    if ($game->turn != 'GUEST') {
+                        return response("invalid turn", 422);
+                    }
+
+                    $player = Account::find($game->id_guest);
+                } else {
+                    return response("invalid player id", 400);
+                }
+
+                // TO DO: set and validate X/O position (wins/losses)
+
+                // change turn when game is not DONE
+                if ($game->status != 'DONE') {
+                    $game->turn = ($game->turn == 'OWNER' ? 'GUEST' : 'OWNER');
+                }
             }
 
             $game->save();
