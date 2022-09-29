@@ -95,6 +95,7 @@ class GameController extends Controller
             $game = new Game();
             $game->id_owner = $bodyContent->id_owner;
             $game->turn = ($random_value == 1 ? 'OWNER' : 'GUEST');
+            $game->status = 'CREATED';
             $game->save();
 
             // set and hide values
@@ -133,7 +134,15 @@ class GameController extends Controller
                 return response("game not found", 404);
             }
 
+            if ($game->status == 'DONE') {
+                return response("game is done", 422);
+            }
+
             if (property_exists($bodyContent, 'id_guest')) {
+                if ($bodyContent->id_guest == $game->id_owner) {
+                    return response("guest is equals to owner", 422);
+                }
+
                 $guest = Account::find($bodyContent->id_guest);
 
                 if (!$guest) {
@@ -141,6 +150,7 @@ class GameController extends Controller
                 }
 
                 $game->id_guest = $bodyContent->id_guest;
+                $game->status = 'STARTED';
             }
 
             $game->save();
