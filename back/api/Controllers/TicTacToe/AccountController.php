@@ -28,6 +28,8 @@ class AccountController extends Controller
                 return response("account not found", 404);
             }
 
+            unset($account->password);
+
             return response($account, 200);
         } catch (\Exception $e) {
             return response("error: " . $e->getMessage(), 500);
@@ -66,6 +68,8 @@ class AccountController extends Controller
                 $account->password = $bodyContent->password;
             }
             $account->save();
+
+            unset($account->password);
 
             return response($account, 201);
         } catch (\Exception $e) {
@@ -110,6 +114,8 @@ class AccountController extends Controller
             }
 
             $account->save();
+
+            unset($account->password);
 
             return response($account, 200);
         } catch (\Exception $e) {

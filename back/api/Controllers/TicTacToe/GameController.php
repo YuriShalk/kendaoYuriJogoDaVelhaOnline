@@ -41,8 +41,8 @@ class GameController extends Controller
                 unset($owner->password);
 
                 $game['owner'] = $owner;
-                unset($game->id_owner);
             }
+            unset($game->id_owner);
 
             if ($game->id_guest) {
                 $guest = Account::find($game->id_guest);
@@ -50,8 +50,8 @@ class GameController extends Controller
                 unset($guest->password);
 
                 $game['guest'] = $guest;
-                unset($game->id_guest);
             }
+            unset($game->id_guest);
 
             if ($game->id_winner) {
                 $winner = Account::find($game->id_winner);
@@ -59,8 +59,8 @@ class GameController extends Controller
                 unset($winner->password);
 
                 $game['winner'] = $winner;
-                unset($game->id_winner);
             }
+            unset($game->id_winner);
 
             return response($game, 200);
         } catch (\Exception $e) {
@@ -168,8 +168,8 @@ class GameController extends Controller
                 unset($owner->password);
 
                 $game['owner'] = $owner;
-                unset($game->id_owner);
             }
+            unset($game->id_owner);
 
             if ($game->id_guest) {
                 if (!$guest) {
@@ -179,8 +179,8 @@ class GameController extends Controller
                 unset($guest->password);
 
                 $game['guest'] = $guest;
-                unset($game->id_guest);
             }
+            unset($game->id_guest);
 
             /* if ($game->id_winner) {
                 $winner = Account::find($game->id_winner);
@@ -188,8 +188,8 @@ class GameController extends Controller
                 unset($winner->password);
 
                 $game['winner'] = $winner;
-                unset($game->id_winner);
-            } */
+            }
+            unset($game->id_winner); */
 
             return response($game, 200);
         } catch (\Exception $e) {
@@ -336,8 +336,8 @@ class GameController extends Controller
                 unset($owner->password);
 
                 $game['owner'] = $owner;
-                unset($game->id_owner);
             }
+            unset($game->id_owner);
 
             if ($game->id_guest) {
                 $guest = Account::find($game->id_guest);
@@ -356,8 +356,8 @@ class GameController extends Controller
                 unset($guest->password);
 
                 $game['guest'] = $guest;
-                unset($game->id_guest);
             }
+            unset($game->id_guest);
 
             if ($game->id_winner) {
                 $winner = Account::find($game->id_winner);
@@ -365,8 +365,8 @@ class GameController extends Controller
                 unset($winner->password);
 
                 $game['winner'] = $winner;
-                unset($game->id_winner);
             }
+            unset($game->id_winner);
 
             return response($game, 200);
         } catch (\Exception $e) {
