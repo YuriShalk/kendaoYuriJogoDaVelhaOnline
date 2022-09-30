@@ -80,11 +80,11 @@ class GameController extends Controller
                 return response("empty request body", 400);
             }
 
-            if (!property_exists($bodyContent, 'id_owner')) {
+            if (!property_exists($bodyContent, 'id_player')) {
                 return response("invalid request body", 400);
             }
 
-            $owner = Account::find($bodyContent->id_owner);
+            $owner = Account::find($bodyContent->id_player);
 
             if (!$owner) {
                 return response("owner not found", 422);
@@ -93,7 +93,7 @@ class GameController extends Controller
             $random_value = rand(0, 1);
 
             $game = new Game();
-            $game->id_owner = $bodyContent->id_owner;
+            $game->id_owner = $bodyContent->id_player;
             $game->turn = ($random_value == 1 ? 'OWNER' : 'GUEST');
             $game->status = 'CREATED';
             $game->save();
