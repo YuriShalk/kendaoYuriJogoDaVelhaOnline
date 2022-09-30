@@ -109,7 +109,7 @@ Atualizar usuário
 Request:
 
 {
-    "username": "yuri"
+    "username": "joão"
 }
 ```
 
@@ -119,7 +119,7 @@ Responses:
 Status 200
 {
     "id": "b194f312-3f2d-11ed-a4a5-ac1f6b8b5c42",
-    "username": "yuri",
+    "username": "joão",
     "wins": 0,
     "losses": 0
 }
@@ -169,7 +169,8 @@ Status 201
     "owner": {
         "username": "kendao",
         "wins": 0,
-        "losses": 0
+        "losses": 0,
+        "it_is_me": true
     }
 }
 
@@ -205,12 +206,14 @@ Status 200
     "owner": {
         "username": "kendao",
         "wins": 0,
-        "losses": 0
+        "losses": 0,
+        "it_is_me": false
     },
     "guest": {
         "username": "yuri",
         "wins": 0,
-        "losses": 0
+        "losses": 0,
+        "it_is_me": true
     }
 }
 
@@ -261,12 +264,14 @@ Status 200
     "owner": {
         "username": "kendao",
         "wins": 0,
-        "losses": 0
+        "losses": 0,
+        "it_is_me": false
     },
     "guest": {
         "username": "yuri",
         "wins": 0,
-        "losses": 0
+        "losses": 0,
+        "it_is_me": true
     }
 }
 
@@ -289,7 +294,7 @@ invalid turn
 
 Obter dados do jogo
 
-`GET http://kg-azevedo.ml/api/tictactoe/games/1`
+`GET http://kg-azevedo.ml/api/tictactoe/games/1?id_player=b194f312-3f2d-11ed-a4a5-ac1f6b8b5c42`
 
 ```json
 Responses:
@@ -311,17 +316,20 @@ Status 200
     "owner": {
         "username": "kendao",
         "wins": 1,
-        "losses": 0
+        "losses": 0,
+        "it_is_me": true
     },
     "guest": {
         "username": "yuri",
         "wins": 0,
-        "losses": 1
+        "losses": 1,
+        "it_is_me": false
     },
     "winner": {
         "username": "kendao",
         "wins": 1,
-        "losses": 0
+        "losses": 0,
+        "it_is_me": true
     }
 }
 
@@ -332,19 +340,19 @@ game not found
 # Regras
 
 Etapa 1 - Criação de Usuário:
-- Antes de tudo, é necessário a criação de um **usuário** para começar a jogar online. O front deverá verificar se existe algum id de usuário no próprio _localStorage_. Se já existir, ok. Se não existir, será necessário chamar a API `POST /accounts` informando um nome de usuário, capturar o id dele na resposta da API e armazenar este id no _localStorage_. Caso o front queira exibir os dados do usuário (nome, ganhos e percas), basta ele chamar a API `GET /accounts/:id` informando o id do usuário. OBS: Pode ser que o nome de usuário já esteja cadastrado para outro jogador e a API retorne erro (status 409). OBS²: _Usuário_ e _jogador_ são a mesma coisa.
+- Antes de tudo, é necessário a criação de um **usuário** para começar a jogar online. O front deverá verificar se existe algum id de usuário no próprio _localStorage_. Se já existir, ok. Se não existir, será necessário chamar a API `POST /accounts` informando um nome de usuário, capturar o id dele na resposta da API e armazenar este id no _localStorage_. Caso o front queira exibir os dados do usuário (nome, ganhos e percas), basta ele chamar a API `GET /accounts/{id}` informando o id do usuário. OBS: Pode ser que o nome de usuário já esteja cadastrado para outro jogador e a API retorne erro (status 409). OBS²: _Usuário_ e _jogador_ são a mesma coisa.
 
 Etapa 2 - Criação de Jogo:
 - O front deverá disponibilizar a opção pro usuário criar uma sala e jogar online com outro jogador. Para isso, o front deverá chamar a API `POST /games/create` informando o id do usuário. Logo após, o front deverá redirecionar este usuário para a sala criada e fazer com que ele fique aguardando a entrada de um outro jogador. OBS: O usuário deverá informar o id do jogo retornado pela API para outro jogador, para que ambos fiquem na mesma sala. OBS²: O id do jogo e o id da sala são a mesma coisa.
 
 Etapa 3 - Entrar no Jogo:
-- O front deverá disponibilizar a opção pro usuário entrar em uma sala já existente informando o id (ou código) dela. Para isso, o front deverá chamar a API `POST /games/:id/join`, informando também o id do usuário. Logo após, o front deverá redirecionar o usuário para a sala existente para que o jogo comece. OBS: Pode ser que a sala informada pelo usuário não exista e a API retorne erro (404).
+- O front deverá disponibilizar a opção pro usuário entrar em uma sala já existente informando o id (ou código) dela. Para isso, o front deverá chamar a API `POST /games/{id}/join`, informando também o id do usuário. Logo após, o front deverá redirecionar o usuário para a sala existente para que o jogo comece. OBS: Pode ser que a sala informada pelo usuário não exista e a API retorne erro (404).
 
 Etapa 4 - Obter Dados do Jogo:
-- O front deverá obter os dados do jogo de tempos em tempos (polling) para saber: as posições preenchidas dos _X/O_, qual é a vez de qual jogador, se o jogo já foi finalizado, quem foi o vencedor etc. Para isso, basta chamar a API `GET /games/:id`, que será retornado todos estes dados.
+- O front deverá obter os dados do jogo de tempos em tempos (polling) para saber: as posições preenchidas dos _X/O_, qual é a vez de qual jogador, se o jogo já foi finalizado, quem foi o vencedor etc. Para isso, basta chamar a API `GET /games/{id}?id_player={id_player}`, que será retornado todos estes dados.
 
 Etapa 5 - Realizar Jogada:
-- O front deverá disponibilizar a opção para o usuário jogar a sua partida (caso seja o seu turno). Para isso, o front deverá chamar a API `POST /games/:id/play` informando o id da sala, o id do jogador e a posição que ele deseja jogar. Caso o jogo tenha sido finalizado, o status dele seja alterado para _DONE_. OBS: Por padrão, o criador da sala recebe o _X_ e o visitante recebe o _O_. OBS2: As posições são de 1 até 9, conforme o exemplo abaixo:
+- O front deverá disponibilizar a opção para o usuário jogar a sua partida (caso seja o seu turno). Para isso, o front deverá chamar a API `POST /games/{id}/play` informando o id da sala, o id do jogador e a posição que ele deseja jogar. Caso o jogo tenha sido finalizado, o status dele será alterado para _DONE_ e os ganhos/percas dos usuários serão incrementados. OBS: Por padrão, o criador da sala recebe o _X_ e o visitante recebe o _O_. OBS2: As posições são de 1 até 9, conforme o exemplo abaixo:
 
 ```
 1 | 2 | 3
