@@ -80,7 +80,7 @@ username already exists
 
 ---
 
-Obter usuário
+Obter dados do usuário
 
 `GET http://kg-azevedo.ml/api/tictactoe/accounts/b194f312-3f2d-11ed-a4a5-ac1f6b8b5c42`
 
@@ -287,7 +287,7 @@ invalid turn
 
 ---
 
-Obter jogo
+Obter dados do jogo
 
 `GET http://kg-azevedo.ml/api/tictactoe/games/1`
 
@@ -328,6 +328,20 @@ Status 200
 Status 404
 game not found
 ```
+
+# Regras
+
+Etapa 1 - Criação de Usuário:
+- Antes de tudo, é necessário a criação de um **usuário** para começar a jogar online. O front deverá verificar se existe algum id de usuário no próprio `localStorage`. Se já existir, ok. Se não existir, será necessário chamar a API `POST /accounts` informando um nome de usuário e capturar o id da resposta para armazenar no `localStorage`. Caso o front queira exibir os dados do usuário (nome, ganhos e percas), basta chamar a API `GET /accounts` informando o id do usuário. OBS: Pode ser que o nome de usuário já exista no banco de dados e a API retorne erro.
+
+Etapa 2 - Criação de Jogo:
+- O front deverá disponibilizar a opção pro usuário criar uma sala para jogar online com outro jogador. Para isso, o front deverá chamar a API `POST /games/create` informando o id do usuário. Logo após, o front deverá redirecionar o usuário para a sala criada e fazer com que ele fique aguardando a entrada de um outro jogador. OBS: O usuário deverá informar o id da sala (retornado pela API) para um outro jogador, para que ambos fiquem na mesma sala.
+
+Etapa 3 - Entrar no Jogo:
+- O front deverá disponibilizar a opção pro usuário entrar em uma sala já existente informando o id (ou código) dela. Para isso, o front deverá chamar a API `POST /games/:id/join` informando também o id do usuário. Logo após, o front deverá redirecionar o usuário para a sala para que o jogo comece.
+
+Etapa 4 - Obter Dados do Jogo:
+- O front deverá obter os dados do jogo de tempos em tempos (polling) para saber qual é o turno do atual jogador, se o outro usuário já fez a jogada, verificar se o jogo já foi finalizado etc. Para isso, basta chamar a API `GET /games/:id` que ela irá retornar todos estes dados.
 
 # Contribuidores
 - Kenneth Gottschalk de Azevedo
