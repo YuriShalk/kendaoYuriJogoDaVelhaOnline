@@ -43,15 +43,15 @@ Route::group(['prefix' => 'tictactoe'], function() {
 		'as' => 'tictactoe.game.get', 'uses' => 'TicTacToe\GameController@get'
 	])->middleware('cors');
 
-	Route::post('/games', [
-		'as' => 'tictactoe.game.post', 'uses' => 'TicTacToe\GameController@post'
+	Route::post('/games/create', [
+		'as' => 'tictactoe.game.create', 'uses' => 'TicTacToe\GameController@create'
 	])->middleware('cors');
 
-	Route::patch('/games', [
-		'as' => 'tictactoe.game.patch', 'uses' => 'TicTacToe\GameController@patch'
+	Route::post('/games/{id}/join', [
+		'as' => 'tictactoe.game.join', 'uses' => 'TicTacToe\GameController@join'
 	])->middleware('cors');
 
-	Route::patch('/games/{id}', [
-		'as' => 'tictactoe.game.patch', 'uses' => 'TicTacToe\GameController@patch'
+	Route::post('/games/{id}/play', [
+		'as' => 'tictactoe.game.play', 'uses' => 'TicTacToe\GameController@play'
 	])->middleware('cors');
 });
