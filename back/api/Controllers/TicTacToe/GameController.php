@@ -143,6 +143,8 @@ class GameController extends Controller
                 return response("game is done", 422);
             }
 
+            $guest = null;
+
             if ($bodyContent->id_player != $game->id_owner) {
                 if ($game->id_guest == null) {
                     $guest = Account::find($bodyContent->id_player);
@@ -188,8 +190,8 @@ class GameController extends Controller
                 unset($winner->password);
 
                 $game['winner'] = $winner;
-            }
-            unset($game->id_winner); */
+            } */
+            unset($game->id_winner);
 
             return response($game, 200);
         } catch (\Exception $e) {
