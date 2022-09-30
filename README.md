@@ -51,26 +51,9 @@ A tabela `tictactoe_game` é a tabela de jogos:
 
 ## Rotas da API
 
-GET http://kg-azevedo.ml/api/tictactoe/accounts/b194f312-3f2d-11ed-a4a5-ac1f6b8b5c42
+Criar usuário
 
-```json
-Responses:
-
-Status 200
-{
-    "id": "b194f312-3f2d-11ed-a4a5-ac1f6b8b5c42",
-    "username": "kendao",
-    "updated_at": "2022-09-28 10:01:40",
-    "created_at": "2022-09-28 10:01:40"
-}
-
-Status 404
-account not found
-```
-
----
-
-POST http://kg-azevedo.ml/api/tictactoe/accounts
+`POST http://kg-azevedo.ml/api/tictactoe/accounts`
 
 ```json
 Request:
@@ -87,23 +70,46 @@ Status 201
 {
     "id": "b194f312-3f2d-11ed-a4a5-ac1f6b8b5c42",
     "username": "kendao",
-    "updated_at": "2022-09-28 10:01:40",
-    "created_at": "2022-09-28 10:01:40"
+    "wins": 0,
+    "losses": 0
 }
 
 Status 409
-account already exists
+username already exists
 ```
 
 ---
 
-PATCH http://kg-azevedo.ml/api/tictactoe/accounts/b194f312-3f2d-11ed-a4a5-ac1f6b8b5c42
+Obter usuário
+
+`GET http://kg-azevedo.ml/api/tictactoe/accounts/b194f312-3f2d-11ed-a4a5-ac1f6b8b5c42`
+
+```json
+Responses:
+
+Status 200
+{
+    "id": "b194f312-3f2d-11ed-a4a5-ac1f6b8b5c42",
+    "username": "kendao",
+    "wins": 0,
+    "losses": 0
+}
+
+Status 404
+account not found
+```
+
+---
+
+Atualizar usuário
+
+`PATCH http://kg-azevedo.ml/api/tictactoe/accounts/b194f312-3f2d-11ed-a4a5-ac1f6b8b5c42`
 
 ```json
 Request:
 
 {
-    "username": "kendao2"
+    "username": "yuri"
 }
 ```
 
@@ -113,18 +119,20 @@ Responses:
 Status 200
 {
     "id": "b194f312-3f2d-11ed-a4a5-ac1f6b8b5c42",
-    "username": "kendao2",
-    "updated_at": "2022-09-28 10:02:35",
-    "created_at": "2022-09-28 10:01:40"
+    "username": "yuri",
+    "wins": 0,
+    "losses": 0
 }
 
 Status 409
-account already exists
+username already exists
 ```
 
 ---
 
-DELETE http://kg-azevedo.ml/api/tictactoe/accounts/b194f312-3f2d-11ed-a4a5-ac1f6b8b5c42
+Deletar usuário
+
+`DELETE http://kg-azevedo.ml/api/tictactoe/accounts/b194f312-3f2d-11ed-a4a5-ac1f6b8b5c42`
 
 ```json
 Responses:
@@ -134,6 +142,191 @@ Status 204
 
 Status 404
 account not found
+```
+
+---
+
+Criar jogo
+
+`POST http://kg-azevedo.ml/api/tictactoe/games/create`
+
+```json
+Request:
+
+{
+    "id_player": "b194f312-3f2d-11ed-a4a5-ac1f6b8b5c42"
+}
+```
+
+```json
+Responses:
+
+Status 201
+{
+    "id": 1,
+    "turn": "GUEST",
+    "status": "CREATED",
+    "owner": {
+        "username": "kendao",
+        "wins": 0,
+        "losses": 0
+    }
+}
+
+Status 400
+bad request
+
+Status 422
+player not found
+```
+
+---
+
+Entrar no jogo
+
+`POST http://kg-azevedo.ml/api/tictactoe/games/1/join`
+
+```json
+Request:
+
+{
+    "id_player": "51c0165f-40ec-11ed-a4a5-ac1f6b8b5c42"
+}
+```
+
+```json
+Responses:
+
+Status 200
+{
+    "id": 1,
+    "turn": "GUEST",
+    "status": "STARTED",
+    "owner": {
+        "username": "kendao",
+        "wins": 0,
+        "losses": 0
+    },
+    "guest": {
+        "username": "yuri",
+        "wins": 0,
+        "losses": 0
+    }
+}
+
+Status 400
+bad request
+
+Status 404
+game not found
+
+Status 422
+player not found
+game is done
+game is full
+```
+
+---
+
+Jogar partida
+
+`POST http://kg-azevedo.ml/api/tictactoe/games/1/play`
+
+```json
+Request:
+
+{
+    "id_player": "51c0165f-40ec-11ed-a4a5-ac1f6b8b5c42",
+    "position": 5
+}
+```
+
+```json
+Responses:
+
+Status 200
+{
+    "id": 8,
+    "first_position": null,
+    "second_position": null,
+    "third_position": null,
+    "fourth_position": null,
+    "fifth_position": "O",
+    "sixth_position": null,
+    "seventh_position": null,
+    "eighth_position": null,
+    "nineth_position": null,
+    "turn": "OWNER",
+    "status": "STARTED",
+    "owner": {
+        "username": "kendao",
+        "wins": 0,
+        "losses": 0
+    },
+    "guest": {
+        "username": "yuri",
+        "wins": 0,
+        "losses": 0
+    }
+}
+
+Status 400
+bad request
+
+Status 404
+game not found
+
+Status 409
+position already marked
+
+Status 422
+game is done
+game is not started
+invalid turn
+```
+
+---
+
+Obter jogo
+
+`GET http://kg-azevedo.ml/api/tictactoe/games/1`
+
+```json
+Responses:
+
+Status 200
+{
+    "id": 1,
+    "first_position": "X",
+    "second_position": "X",
+    "third_position": "X",
+    "fourth_position": "O",
+    "fifth_position": "O",
+    "sixth_position": null,
+    "seventh_position": "0",
+    "eighth_position": null,
+    "nineth_position": null,
+    "turn": "OWNER",
+    "status": "DONE",
+    "owner": {
+        "username": "kendao",
+        "wins": 1,
+        "losses": 0
+    },
+    "guest": {
+        "username": "yuri",
+        "wins": 0,
+        "losses": 1
+    },
+    "winner": {
+        "username": "kendao",
+        "wins": 1,
+        "losses": 0
+    }
+}
+
+Status 404
+game not found
 ```
 
 # Contribuidores

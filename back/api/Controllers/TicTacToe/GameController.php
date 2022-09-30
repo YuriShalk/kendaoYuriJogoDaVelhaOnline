@@ -87,7 +87,7 @@ class GameController extends Controller
             $owner = Account::find($bodyContent->id_player);
 
             if (!$owner) {
-                return response("owner not found", 422);
+                return response("player not found", 422);
             }
 
             $random_value = rand(0, 1);

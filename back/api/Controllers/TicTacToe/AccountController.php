@@ -55,7 +55,7 @@ class AccountController extends Controller
             $existing_account = Account::where('username', '=', $bodyContent->username)->first();
             
             if ($existing_account) {
-                return response("account already exists", 409);
+                return response("username already exists", 409);
             }
 
             $rows = \DB::select("SELECT UUID() as id");
@@ -103,7 +103,7 @@ class AccountController extends Controller
                 $existing_account = Account::where('username', '=', $bodyContent->username)->first();
             
                 if ($existing_account && $existing_account->id != $request->id) {
-                    return response("account already exists", 409);
+                    return response("username already exists", 409);
                 }
 
                 $account->username = $bodyContent->username;
