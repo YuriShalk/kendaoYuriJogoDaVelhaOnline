@@ -75,7 +75,7 @@ Status 201
 }
 
 Status 409
-username already exists
+{ "status": 409, "error": "username already exists" }
 ```
 
 ---
@@ -96,7 +96,7 @@ Status 200
 }
 
 Status 404
-account not found
+{ "status": 404, "error": "account not found" }
 ```
 
 ---
@@ -124,8 +124,11 @@ Status 200
     "losses": 0
 }
 
+Status 404
+{ "status": 404, "error": "account not found" }
+
 Status 409
-username already exists
+{ "status": 409, "error": "username already exists" }
 ```
 
 ---
@@ -141,7 +144,7 @@ Status 204
 (corpo vazio)
 
 Status 404
-account not found
+{ "status": 404, "error": "account not found" }
 ```
 
 ---
@@ -175,10 +178,10 @@ Status 201
 }
 
 Status 400
-bad request
+{ "status": 400, "error": "bad request" }
 
 Status 422
-player not found
+{ "status": 422, "error": "player does not exist" }
 ```
 
 ---
@@ -218,15 +221,15 @@ Status 200
 }
 
 Status 400
-bad request
+{ "status": 400, "error": "bad request" }
 
 Status 404
-game not found
+{ "status": 404, "error": "game not found" }
 
 Status 422
-player not found
-game is done
-game is full
+{ "status": 422, "error": "player does not exist" }
+{ "status": 422, "error": "game is done" }
+{ "status": 422, "error": "game is full" }
 ```
 
 ---
@@ -276,18 +279,18 @@ Status 200
 }
 
 Status 400
-bad request
+{ "status": 400, "error": "bad request" }
 
 Status 404
-game not found
+{ "status": 404, "error": "game not found" }
 
 Status 409
-position already marked
+{ "status": 409, "error": "position already marked" }
 
 Status 422
-game is done
-game is not started
-invalid turn
+{ "status": 422, "error": "game is done" }
+{ "status": 422, "error": "game is not started" }
+{ "status": 422, "error": "invalid turn" }
 ```
 
 ---
@@ -334,7 +337,7 @@ Status 200
 }
 
 Status 404
-game not found
+{ "status": 404, "error": "game not found" }
 ```
 
 # Regras

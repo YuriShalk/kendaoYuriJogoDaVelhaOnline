@@ -14,7 +14,7 @@ class GameController extends Controller
     public function get(Request $request) {
         try {
             /* if ($request->header('Authorization') != $this->token) {
-                return response("unauthorized", 401);
+                return $this->makeResponseError("unauthorized", 401);
             } */
 
             if ($request->id) {
@@ -26,11 +26,11 @@ class GameController extends Controller
                     $game = Game::where('status', '!=', 'DONE')->where('id_guest', '=', $request->id_player)->first();
                 }
             } */ else {
-                return response("invalid parameters", 400);
+                return $this->makeResponseError("invalid parameters", 400);
             }
 
             if (!$game) {
-                return response("game not found", 404);
+                return $this->makeResponseError("game not found", 404);
             }
 
             // set and hide values
@@ -67,30 +67,30 @@ class GameController extends Controller
 
             return response($game, 200);
         } catch (\Exception $e) {
-            return response("error: " . $e->getMessage(), 500);
+            return $this->makeResponseError("error: " . $e->getMessage(), 500);
         }
     }
 
     public function create(Request $request) {
         try {
             /* if ($request->header('Authorization') != $this->token) {
-                return response("unauthorized", 401);
+                return $this->makeResponseError("unauthorized", 401);
             } */
 
             $bodyContent = json_decode($request->getContent());
 
             if (!$bodyContent) {
-                return response("empty request body", 400);
+                return $this->makeResponseError("empty request body", 400);
             }
 
             if (!property_exists($bodyContent, 'id_player')) {
-                return response("invalid request body", 400);
+                return $this->makeResponseError("invalid request body", 400);
             }
 
             $owner = Account::find($bodyContent->id_player);
 
             if (!$owner) {
-                return response("player not found", 422);
+                return $this->makeResponseError("player does not exist", 422);
             }
 
             $random_value = rand(0, 1);
@@ -113,7 +113,7 @@ class GameController extends Controller
 
             return response($game, 201);
         } catch (\Exception $e) {
-            return response("error: " . $e->getMessage(), 500);
+            return $this->makeResponseError("error: " . $e->getMessage(), 500);
         }
     }
 
@@ -121,31 +121,31 @@ class GameController extends Controller
     public function join(Request $request) {
         try {
             /* if ($request->header('Authorization') != $this->token) {
-                return response("unauthorized", 401);
+                return $this->makeResponseError("unauthorized", 401);
             } */
 
             if (!$request->id) {
-                return response("invalid parameters", 400);
+                return $this->makeResponseError("invalid parameters", 400);
             }
 
             $bodyContent = json_decode($request->getContent());
 
             if (!$bodyContent) {
-                return response("empty request body", 400);
+                return $this->makeResponseError("empty request body", 400);
             }
 
             if (!property_exists($bodyContent, 'id_player')) {
-                return response("invalid request body", 400);
+                return $this->makeResponseError("invalid request body", 400);
             }
 
             $game = Game::find($request->id);
 
             if (!$game) {
-                return response("game not found", 404);
+                return $this->makeResponseError("game not found", 404);
             }
 
             if ($game->status == 'DONE') {
-                return response("game is done", 422);
+                return $this->makeResponseError("game is done", 422);
             }
 
             $guest = null;
@@ -155,7 +155,7 @@ class GameController extends Controller
                     $guest = Account::find($bodyContent->id_player);
 
                     if (!$guest) {
-                        return response("player not found", 422);
+                        return $this->makeResponseError("player does not exist", 422);
                     }
 
                     $game->id_guest = $guest->id;
@@ -163,7 +163,7 @@ class GameController extends Controller
 
                     $game->save();
                 } else if ($game->id_guest != $bodyContent->id_player) {
-                    return response("game is full", 422);
+                    return $this->makeResponseError("game is full", 422);
                 }
             }
 
@@ -203,7 +203,7 @@ class GameController extends Controller
 
             return response($game, 200);
         } catch (\Exception $e) {
-            return response("error: " . $e->getMessage(), 500);
+            return $this->makeResponseError("error: " . $e->getMessage(), 500);
         }
     }
 
@@ -211,99 +211,99 @@ class GameController extends Controller
     public function play(Request $request) {
         try {
             /* if ($request->header('Authorization') != $this->token) {
-                return response("unauthorized", 401);
+                return $this->makeResponseError("unauthorized", 401);
             } */
 
             if (!$request->id) {
-                return response("invalid parameters", 400);
+                return $this->makeResponseError("invalid parameters", 400);
             }
 
             $bodyContent = json_decode($request->getContent());
 
             if (!$bodyContent) {
-                return response("empty request body", 400);
+                return $this->makeResponseError("empty request body", 400);
             }
 
             if (!property_exists($bodyContent, 'id_player') ||
                 !property_exists($bodyContent, 'position')) {
-                return response("invalid request body", 400);
+                return $this->makeResponseError("invalid request body", 400);
             }
 
             $game = Game::find($request->id);
 
             if (!$game) {
-                return response("game not found", 404);
+                return $this->makeResponseError("game not found", 404);
             }
 
             if ($game->status == 'DONE') {
-                return response("game is done", 422);
+                return $this->makeResponseError("game is done", 422);
             }
 
             if ($game->status != 'STARTED') {
-                return response("game is not started", 422);
+                return $this->makeResponseError("game is not started", 422);
             }
 
             if ($bodyContent->id_player == $game->id_owner) { // when is the owner
                 if ($game->turn != 'OWNER') {
-                    return response("invalid turn", 422);
+                    return $this->makeResponseError("invalid turn", 422);
                 }
             } else if ($bodyContent->id_player == $game->id_guest) { // when is the guest
                 if ($game->turn != 'GUEST') {
-                    return response("invalid turn", 422);
+                    return $this->makeResponseError("invalid turn", 422);
                 }
             } else {
-                return response("invalid player id", 400);
+                return $this->makeResponseError("invalid player id", 400);
             }
 
             $value = ($game->turn == 'OWNER' ? 'X' : 'O');
 
             if ($bodyContent->position == 1) {
                 if ($game->first_position) {
-                    return response("position already marked", 409);
+                    return $this->makeResponseError("position already marked", 409);
                 }
                 $game->first_position = $value;
             } else if ($bodyContent->position == 2) {
                 if ($game->second_position) {
-                    return response("position already marked", 409);
+                    return $this->makeResponseError("position already marked", 409);
                 }
                 $game->second_position = $value;
             } else if ($bodyContent->position == 3) {
                 if ($game->third_position) {
-                    return response("position already marked", 409);
+                    return $this->makeResponseError("position already marked", 409);
                 }
                 $game->third_position = $value;
             } else if ($bodyContent->position == 4) {
                 if ($game->fourth_position) {
-                    return response("position already marked", 409);
+                    return $this->makeResponseError("position already marked", 409);
                 }
                 $game->fourth_position = $value;
             } else if ($bodyContent->position == 5) {
                 if ($game->fifth_position) {
-                    return response("position already marked", 409);
+                    return $this->makeResponseError("position already marked", 409);
                 }
                 $game->fifth_position = $value;
             } else if ($bodyContent->position == 6) {
                 if ($game->sixth_position) {
-                    return response("position already marked", 409);
+                    return $this->makeResponseError("position already marked", 409);
                 }
                 $game->sixth_position = $value;
             } else if ($bodyContent->position == 7) {
                 if ($game->seventh_position) {
-                    return response("position already marked", 409);
+                    return $this->makeResponseError("position already marked", 409);
                 }
                 $game->seventh_position = $value;
             } else if ($bodyContent->position == 8) {
                 if ($game->eighth_position) {
-                    return response("position already marked", 409);
+                    return $this->makeResponseError("position already marked", 409);
                 }
                 $game->eighth_position = $value;
             } else if ($bodyContent->position == 9) {
                 if ($game->nineth_position) {
-                    return response("position already marked", 409);
+                    return $this->makeResponseError("position already marked", 409);
                 }
                 $game->nineth_position = $value;
             } else {
-                return response("invalid position", 400);
+                return $this->makeResponseError("invalid position", 400);
             }
 
             if (
@@ -387,7 +387,18 @@ class GameController extends Controller
 
             return response($game, 200);
         } catch (\Exception $e) {
-            return response("error: " . $e->getMessage(), 500);
+            return $this->makeResponseError("error: " . $e->getMessage(), 500);
         }
+    }
+
+    private function makeResponseError($message, $status) {
+        $object = (object) [
+            'status' => $status,
+            'error' => $message
+        ];
+
+        return response(
+            json_encode($object, JSON_UNESCAPED_UNICODE), $status
+        )->header('Content-Type', 'application/json');;
     }
 }
