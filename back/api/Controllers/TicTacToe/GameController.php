@@ -37,7 +37,7 @@ class GameController extends Controller
 
             if ($game->id_owner) {
                 $owner = Account::find($game->id_owner);
-                $owner['it_is_me'] = ($request->id_player ? ($owner->id == $request->id_player) : null);
+                $owner['myself'] = ($request->id_player ? ($owner->id == $request->id_player) : null);
                 unset($owner->id);
                 unset($owner->password);
 
@@ -47,7 +47,7 @@ class GameController extends Controller
 
             if ($game->id_guest) {
                 $guest = Account::find($game->id_guest);
-                $guest['it_is_me'] = ($request->id_player ? ($guest->id == $request->id_player) : null);
+                $guest['myself'] = ($request->id_player ? ($guest->id == $request->id_player) : null);
                 unset($guest->id);
                 unset($guest->password);
 
@@ -57,7 +57,7 @@ class GameController extends Controller
 
             if ($game->id_winner) {
                 $winner = Account::find($game->id_winner);
-                $winner['it_is_me'] = ($request->id_player ? ($winner->id == $request->id_player) : null);
+                $winner['myself'] = ($request->id_player ? ($winner->id == $request->id_player) : null);
                 unset($winner->id);
                 unset($winner->password);
 
@@ -103,7 +103,7 @@ class GameController extends Controller
 
             // set and hide values
 
-            $owner['it_is_me'] = true;
+            $owner['myself'] = true;
 
             unset($owner->id);
             unset($owner->password);
@@ -171,7 +171,7 @@ class GameController extends Controller
 
             if ($game->id_owner) {
                 $owner = Account::find($game->id_owner);
-                $owner['it_is_me'] = ($owner->id == $bodyContent->id_player);
+                $owner['myself'] = ($owner->id == $bodyContent->id_player);
                 unset($owner->id);
                 unset($owner->password);
 
@@ -183,7 +183,7 @@ class GameController extends Controller
                 if (!$guest) {
                     $guest = Account::find($game->id_guest);
                 }
-                $guest['it_is_me'] = ($guest->id == $bodyContent->id_player);
+                $guest['myself'] = ($guest->id == $bodyContent->id_player);
                 unset($guest->id);
                 unset($guest->password);
 
@@ -193,7 +193,7 @@ class GameController extends Controller
 
             /* if ($game->id_winner) {
                 $winner = Account::find($game->id_winner);
-                $winner['it_is_me'] = ($winner->id == $bodyContent->id_player);
+                $winner['myself'] = ($winner->id == $bodyContent->id_player);
                 unset($winner->id);
                 unset($winner->password);
 
@@ -342,7 +342,7 @@ class GameController extends Controller
                     $owner->save();
                 }
 
-                $owner['it_is_me'] = ($owner->id == $bodyContent->id_player);
+                $owner['myself'] = ($owner->id == $bodyContent->id_player);
 
                 unset($owner->id);
                 unset($owner->password);
@@ -364,7 +364,7 @@ class GameController extends Controller
                     $guest->save();
                 }
 
-                $guest['it_is_me'] = ($guest->id == $bodyContent->id_player);
+                $guest['myself'] = ($guest->id == $bodyContent->id_player);
 
                 unset($guest->id);
                 unset($guest->password);
@@ -376,7 +376,7 @@ class GameController extends Controller
             if ($game->id_winner) {
                 $winner = Account::find($game->id_winner);
 
-                $winner['it_is_me'] = ($winner->id == $bodyContent->id_player);
+                $winner['myself'] = ($winner->id == $bodyContent->id_player);
 
                 unset($winner->id);
                 unset($winner->password);

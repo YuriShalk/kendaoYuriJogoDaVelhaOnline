@@ -173,7 +173,7 @@ Responses:
         "username": "kendao",
         "wins": 0,
         "losses": 0,
-        "it_is_me": true
+        "myself": true
     }
 }
 
@@ -210,13 +210,13 @@ Responses:
         "username": "kendao",
         "wins": 0,
         "losses": 0,
-        "it_is_me": false
+        "myself": false
     },
     "guest": {
         "username": "yuri",
         "wins": 0,
         "losses": 0,
-        "it_is_me": true
+        "myself": true
     }
 }
 
@@ -268,13 +268,13 @@ Responses:
         "username": "kendao",
         "wins": 0,
         "losses": 0,
-        "it_is_me": false
+        "myself": false
     },
     "guest": {
         "username": "yuri",
         "wins": 0,
         "losses": 0,
-        "it_is_me": true
+        "myself": true
     }
 }
 
@@ -320,19 +320,19 @@ Responses:
         "username": "kendao",
         "wins": 1,
         "losses": 0,
-        "it_is_me": true
+        "myself": true
     },
     "guest": {
         "username": "yuri",
         "wins": 0,
         "losses": 1,
-        "it_is_me": false
+        "myself": false
     },
     "winner": {
         "username": "kendao",
         "wins": 1,
         "losses": 0,
-        "it_is_me": true
+        "myself": true
     }
 }
 
