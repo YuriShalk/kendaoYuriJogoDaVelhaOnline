@@ -66,7 +66,7 @@ Request:
 ```json
 Responses:
 
-Status 201
+// Status 201
 {
     "id": "b194f312-3f2d-11ed-a4a5-ac1f6b8b5c42",
     "username": "kendao",
@@ -74,7 +74,7 @@ Status 201
     "losses": 0
 }
 
-Status 409
+// Status 409
 { "status": 409, "error": "username already exists" }
 ```
 
@@ -87,7 +87,7 @@ Obter dados do usuário
 ```json
 Responses:
 
-Status 200
+// Status 200
 {
     "id": "b194f312-3f2d-11ed-a4a5-ac1f6b8b5c42",
     "username": "kendao",
@@ -95,7 +95,7 @@ Status 200
     "losses": 0
 }
 
-Status 404
+// Status 404
 { "status": 404, "error": "account not found" }
 ```
 
@@ -116,7 +116,7 @@ Request:
 ```json
 Responses:
 
-Status 200
+// Status 200
 {
     "id": "b194f312-3f2d-11ed-a4a5-ac1f6b8b5c42",
     "username": "joão",
@@ -124,10 +124,10 @@ Status 200
     "losses": 0
 }
 
-Status 404
+// Status 404
 { "status": 404, "error": "account not found" }
 
-Status 409
+// Status 409
 { "status": 409, "error": "username already exists" }
 ```
 
@@ -140,10 +140,10 @@ Deletar usuário
 ```json
 Responses:
 
-Status 204
-(corpo vazio)
+// Status 204
+(empty body)
 
-Status 404
+// Status 404
 { "status": 404, "error": "account not found" }
 ```
 
@@ -164,7 +164,7 @@ Request:
 ```json
 Responses:
 
-Status 201
+// Status 201
 {
     "id": 1,
     "turn": "GUEST",
@@ -177,10 +177,10 @@ Status 201
     }
 }
 
-Status 400
+// Status 400
 { "status": 400, "error": "bad request" }
 
-Status 422
+// Status 422
 { "status": 422, "error": "player does not exist" }
 ```
 
@@ -201,7 +201,7 @@ Request:
 ```json
 Responses:
 
-Status 200
+// Status 200
 {
     "id": 1,
     "turn": "GUEST",
@@ -220,13 +220,13 @@ Status 200
     }
 }
 
-Status 400
+// Status 400
 { "status": 400, "error": "bad request" }
 
-Status 404
+// Status 404
 { "status": 404, "error": "game not found" }
 
-Status 422
+// Status 422
 { "status": 422, "error": "player does not exist" }
 { "status": 422, "error": "game is done" }
 { "status": 422, "error": "game is full" }
@@ -250,7 +250,7 @@ Request:
 ```json
 Responses:
 
-Status 200
+// Status 200
 {
     "id": 8,
     "first_position": null,
@@ -278,16 +278,16 @@ Status 200
     }
 }
 
-Status 400
+// Status 400
 { "status": 400, "error": "bad request" }
 
-Status 404
+// Status 404
 { "status": 404, "error": "game not found" }
 
-Status 409
+// Status 409
 { "status": 409, "error": "position already marked" }
 
-Status 422
+// Status 422
 { "status": 422, "error": "game is done" }
 { "status": 422, "error": "game is not started" }
 { "status": 422, "error": "invalid turn" }
@@ -302,7 +302,7 @@ Obter dados do jogo
 ```json
 Responses:
 
-Status 200
+// Status 200
 {
     "id": 1,
     "first_position": "X",
@@ -336,7 +336,7 @@ Status 200
     }
 }
 
-Status 404
+// Status 404
 { "status": 404, "error": "game not found" }
 ```
 
