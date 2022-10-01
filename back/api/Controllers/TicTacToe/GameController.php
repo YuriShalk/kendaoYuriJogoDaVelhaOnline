@@ -35,35 +35,37 @@ class GameController extends Controller
 
             // set and hide values
 
+            $players = [];
+
             if ($game->id_owner) {
                 $owner = Account::find($game->id_owner);
                 $owner['myself'] = ($request->id_player ? ($owner->id == $request->id_player) : null);
+                $owner['winner'] = ($game->id_winner ? ($owner->id == $game->id_winner) : null);
+                $owner['turn'] = ($game->status != 'STARTED' ? null : ($game->turn == 'OWNER'));
                 unset($owner->id);
                 unset($owner->password);
 
-                $game['owner'] = $owner;
+                $players[] = $owner;
             }
             unset($game->id_owner);
 
             if ($game->id_guest) {
                 $guest = Account::find($game->id_guest);
                 $guest['myself'] = ($request->id_player ? ($guest->id == $request->id_player) : null);
+                $guest['winner'] = ($game->id_winner ? ($guest->id == $game->id_winner) : null);
+                $guest['turn'] = ($game->status != 'STARTED' ? null : ($game->turn == 'GUEST'));
                 unset($guest->id);
                 unset($guest->password);
 
-                $game['guest'] = $guest;
+                $players[] = $guest;
             }
             unset($game->id_guest);
 
-            if ($game->id_winner) {
-                $winner = Account::find($game->id_winner);
-                $winner['myself'] = ($request->id_player ? ($winner->id == $request->id_player) : null);
-                unset($winner->id);
-                unset($winner->password);
-
-                $game['winner'] = $winner;
-            }
             unset($game->id_winner);
+
+            unset($game->turn);
+
+            $game['players'] = $players;
 
             return response($game, 200);
         } catch (\Exception $e) {
@@ -103,13 +105,24 @@ class GameController extends Controller
 
             // set and hide values
 
+            $players = [];
+
             $owner['myself'] = true;
+            $owner['winner'] = null;
+            $owner['turn'] = null;
 
             unset($owner->id);
             unset($owner->password);
 
-            $game['owner'] = $owner;
+            $players[] = $owner;
+
             unset($game->id_owner);
+            unset($game->id_guest);
+            unset($game->id_winner);
+
+            unset($game->turn);
+
+            $game['players'] = $players;
 
             return response($game, 201);
         } catch (\Exception $e) {
@@ -169,13 +182,17 @@ class GameController extends Controller
 
             // set and hide values
 
+            $players = [];
+
             if ($game->id_owner) {
                 $owner = Account::find($game->id_owner);
                 $owner['myself'] = ($owner->id == $bodyContent->id_player);
+                $owner['winner'] = null;
+                $owner['turn'] = ($game->turn == 'OWNER');
                 unset($owner->id);
                 unset($owner->password);
 
-                $game['owner'] = $owner;
+                $players[] = $owner;
             }
             unset($game->id_owner);
 
@@ -184,22 +201,20 @@ class GameController extends Controller
                     $guest = Account::find($game->id_guest);
                 }
                 $guest['myself'] = ($guest->id == $bodyContent->id_player);
+                $guest['winner'] = null;
+                $guest['turn'] = ($game->turn == 'GUEST');
                 unset($guest->id);
                 unset($guest->password);
 
-                $game['guest'] = $guest;
+                $players[] = $guest;
             }
             unset($game->id_guest);
 
-            /* if ($game->id_winner) {
-                $winner = Account::find($game->id_winner);
-                $winner['myself'] = ($winner->id == $bodyContent->id_player);
-                unset($winner->id);
-                unset($winner->password);
-
-                $game['winner'] = $winner;
-            } */
             unset($game->id_winner);
+
+            unset($game->turn);
+
+            $game['players'] = $players;
 
             return response($game, 200);
         } catch (\Exception $e) {
@@ -329,61 +344,57 @@ class GameController extends Controller
 
             // set and hide values
 
-            if ($game->id_owner) {
-                $owner = Account::find($game->id_owner);
+            $players = [];
 
-                // update player
-                if ($game->status == 'DONE') {
-                    if ($owner->id == $game->id_winner) {
-                        $owner->wins = ($owner->wins + 1);
-                    } else {
-                        $owner->losses = ($owner->losses + 1);
-                    }
-                    $owner->save();
+            $owner = Account::find($game->id_owner);
+
+            // update player
+            if ($game->status == 'DONE') {
+                if ($owner->id == $game->id_winner) {
+                    $owner->wins = ($owner->wins + 1);
+                } else {
+                    $owner->losses = ($owner->losses + 1);
                 }
-
-                $owner['myself'] = ($owner->id == $bodyContent->id_player);
-
-                unset($owner->id);
-                unset($owner->password);
-
-                $game['owner'] = $owner;
+                $owner->save();
             }
+
+            $owner['myself'] = ($owner->id == $bodyContent->id_player);
+            $owner['winner'] = ($game->id_winner ? ($owner->id == $game->id_winner) : null);
+            $owner['turn'] = ($game->status != 'STARTED' ? null : ($game->turn == 'OWNER'));
+            unset($owner->id);
+            unset($owner->password);
+
+            $players[] = $owner;
+
             unset($game->id_owner);
 
-            if ($game->id_guest) {
-                $guest = Account::find($game->id_guest);
+            $guest = Account::find($game->id_guest);
 
-                // update player
-                if ($game->status == 'DONE') {
-                    if ($guest->id == $game->id_winner) {
-                        $guest->wins = ($guest->wins + 1);
-                    } else {
-                        $guest->losses = ($guest->losses + 1);
-                    }
-                    $guest->save();
+            // update player
+            if ($game->status == 'DONE') {
+                if ($guest->id == $game->id_winner) {
+                    $guest->wins = ($guest->wins + 1);
+                } else {
+                    $guest->losses = ($guest->losses + 1);
                 }
-
-                $guest['myself'] = ($guest->id == $bodyContent->id_player);
-
-                unset($guest->id);
-                unset($guest->password);
-
-                $game['guest'] = $guest;
+                $guest->save();
             }
+
+            $guest['myself'] = ($guest->id == $bodyContent->id_player);
+            $guest['winner'] = ($game->id_winner ? ($guest->id == $game->id_winner) : null);
+            $guest['turn'] = ($game->status != 'STARTED' ? null : ($game->turn == 'GUEST'));
+            unset($guest->id);
+            unset($guest->password);
+
+            $players[] = $guest;
+
             unset($game->id_guest);
 
-            if ($game->id_winner) {
-                $winner = Account::find($game->id_winner);
-
-                $winner['myself'] = ($winner->id == $bodyContent->id_player);
-
-                unset($winner->id);
-                unset($winner->password);
-
-                $game['winner'] = $winner;
-            }
             unset($game->id_winner);
+
+            unset($game->turn);
+
+            $game['players'] = $players;
 
             return response($game, 200);
         } catch (\Exception $e) {
