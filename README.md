@@ -55,7 +55,7 @@ Criar usuário
 
 `POST http://kg-azevedo.ml/api/tictactoe/accounts`
 
-```json
+```jsonc
 Request:
 
 {
@@ -63,7 +63,7 @@ Request:
 }
 ```
 
-```json
+```jsonc
 Responses:
 
 // Status 201
@@ -84,7 +84,7 @@ Obter dados do usuário
 
 `GET http://kg-azevedo.ml/api/tictactoe/accounts/b194f312-3f2d-11ed-a4a5-ac1f6b8b5c42`
 
-```json
+```jsonc
 Responses:
 
 // Status 200
@@ -105,7 +105,7 @@ Atualizar usuário
 
 `PATCH http://kg-azevedo.ml/api/tictactoe/accounts/b194f312-3f2d-11ed-a4a5-ac1f6b8b5c42`
 
-```json
+```jsonc
 Request:
 
 {
@@ -113,7 +113,7 @@ Request:
 }
 ```
 
-```json
+```jsonc
 Responses:
 
 // Status 200
@@ -137,7 +137,7 @@ Deletar usuário
 
 `DELETE http://kg-azevedo.ml/api/tictactoe/accounts/b194f312-3f2d-11ed-a4a5-ac1f6b8b5c42`
 
-```json
+```jsonc
 Responses:
 
 // Status 204
@@ -153,7 +153,7 @@ Criar jogo
 
 `POST http://kg-azevedo.ml/api/tictactoe/games/create`
 
-```json
+```jsonc
 Request:
 
 {
@@ -161,7 +161,7 @@ Request:
 }
 ```
 
-```json
+```jsonc
 Responses:
 
 // Status 201
@@ -190,7 +190,7 @@ Entrar no jogo
 
 `POST http://kg-azevedo.ml/api/tictactoe/games/1/join`
 
-```json
+```jsonc
 Request:
 
 {
@@ -198,7 +198,7 @@ Request:
 }
 ```
 
-```json
+```jsonc
 Responses:
 
 // Status 200
@@ -238,7 +238,7 @@ Jogar partida
 
 `POST http://kg-azevedo.ml/api/tictactoe/games/1/play`
 
-```json
+```jsonc
 Request:
 
 {
@@ -247,7 +247,7 @@ Request:
 }
 ```
 
-```json
+```jsonc
 Responses:
 
 // Status 200
@@ -299,7 +299,7 @@ Obter dados do jogo
 
 `GET http://kg-azevedo.ml/api/tictactoe/games/1?id_player=b194f312-3f2d-11ed-a4a5-ac1f6b8b5c42`
 
-```json
+```jsonc
 Responses:
 
 // Status 200
