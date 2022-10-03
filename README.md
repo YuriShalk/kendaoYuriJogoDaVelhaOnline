@@ -167,14 +167,17 @@ Responses:
 // Status 201
 {
     "id": 1,
-    "turn": "GUEST",
     "status": "CREATED",
-    "owner": {
-        "username": "kendao",
-        "wins": 0,
-        "losses": 0,
-        "myself": true
-    }
+    "players": [
+        {
+            "username": "kendao",
+            "wins": 0,
+            "losses": 0,
+            "myself": true,
+            "winner": null,
+            "turn": null
+        }
+    ]
 }
 
 // Status 400
@@ -204,20 +207,34 @@ Responses:
 // Status 200
 {
     "id": 1,
-    "turn": "GUEST",
+    "first_position": null,
+    "second_position": null,
+    "third_position": null,
+    "fourth_position": null,
+    "fifth_position": null,
+    "sixth_position": null,
+    "seventh_position": null,
+    "eighth_position": null,
+    "nineth_position": null,
     "status": "STARTED",
-    "owner": {
-        "username": "kendao",
-        "wins": 0,
-        "losses": 0,
-        "myself": false
-    },
-    "guest": {
-        "username": "yuri",
-        "wins": 0,
-        "losses": 0,
-        "myself": true
-    }
+    "players": [
+        {
+            "username": "kendao",
+            "wins": 0,
+            "losses": 0,
+            "myself": false,
+            "winner": null,
+            "turn": false
+        },
+        {
+            "username": "yuri",
+            "wins": 0,
+            "losses": 0,
+            "myself": true,
+            "winner": null,
+            "turn": true
+        }
+    ]
 }
 
 // Status 400
@@ -252,7 +269,7 @@ Responses:
 
 // Status 200
 {
-    "id": 8,
+    "id": 1,
     "first_position": null,
     "second_position": null,
     "third_position": null,
@@ -262,20 +279,25 @@ Responses:
     "seventh_position": null,
     "eighth_position": null,
     "nineth_position": null,
-    "turn": "OWNER",
     "status": "STARTED",
-    "owner": {
-        "username": "kendao",
-        "wins": 0,
-        "losses": 0,
-        "myself": false
-    },
-    "guest": {
-        "username": "yuri",
-        "wins": 0,
-        "losses": 0,
-        "myself": true
-    }
+    "players": [
+        {
+            "username": "kendao",
+            "wins": 0,
+            "losses": 0,
+            "myself": false,
+            "winner": null,
+            "turn": true
+        },
+        {
+            "username": "yuri",
+            "wins": 0,
+            "losses": 0,
+            "myself": true,
+            "winner": null,
+            "turn": false
+        }
+    ]
 }
 
 // Status 400
@@ -314,26 +336,25 @@ Responses:
     "seventh_position": "0",
     "eighth_position": null,
     "nineth_position": null,
-    "turn": "OWNER",
     "status": "DONE",
-    "owner": {
-        "username": "kendao",
-        "wins": 1,
-        "losses": 0,
-        "myself": true
-    },
-    "guest": {
-        "username": "yuri",
-        "wins": 0,
-        "losses": 1,
-        "myself": false
-    },
-    "winner": {
-        "username": "kendao",
-        "wins": 1,
-        "losses": 0,
-        "myself": true
-    }
+    "players": [
+        {
+            "username": "kendao",
+            "wins": 1,
+            "losses": 0,
+            "myself": true,
+            "winner": true,
+            "turn": null
+        },
+        {
+            "username": "yuri",
+            "wins": 0,
+            "losses": 1,
+            "myself": false,
+            "winner": false,
+            "turn": null
+        }
+    ]
 }
 
 // Status 404
