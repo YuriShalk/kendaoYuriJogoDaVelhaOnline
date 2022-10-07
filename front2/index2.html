@@ -74,6 +74,7 @@
                 <button class="game-button" id="idGameButton8" onclick="playGame(8)">_</button>
                 <button class="game-button" id="idGameButton9" onclick="playGame(9)">_</button>
                 <h3 id="idGamePlayers">P1: ? | P2: ?</h3>
+                <button class="custom-button" onclick="exitGame()">Sair da Sala</button>
             </div>
         </center>
     </div>
@@ -88,7 +89,7 @@
 
     setInterval(function () {
         getGame();
-    }, 3000);
+    }, 2500);
 
     function createAccount() {
         const data = {
@@ -280,6 +281,16 @@
         });
     }
 
+    function exitGame() {
+        showGame({
+            id: 0,
+            status: '?',
+            players: []
+        });
+
+        changeFlow();
+    }
+
     function changeFlow() {
         if (accountExists()) {
             showMainPage();
@@ -342,7 +353,7 @@
     }
 
     function parseGameStatus(gameStatus) {
-        return (gameStatus == 'CREATED' ? 'Criado' : (gameStatus == 'STARTED' ? 'Iniciado' : 'Finalizado'));
+        return (gameStatus == 'CREATED' ? 'Criado' : (gameStatus == 'STARTED' ? 'Iniciado' : (gameStatus == 'DONE' ? 'Finalizado' : '?')));
     }
 
     function getFirstPlayer(game) {
