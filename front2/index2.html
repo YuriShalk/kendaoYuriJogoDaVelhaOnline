@@ -3,6 +3,12 @@
         width: 150px;
     }
 
+    .game-button {
+        height: 25px;
+        width: 25px;
+        margin-bottom: 5px;
+    }
+
     .middle {
         margin: 0;
         position: absolute;
@@ -48,9 +54,25 @@
                 <button class="custom-button" onclick="createGame()">Criar Sala</button>
                 <br />
                 <br />
-                <input type="number" maxlength="12" id="idGame" placeholder="Número da Sala" style="margin-bottom: 5px" />
+                <input type="number" maxlength="12" id="idGameNumber" placeholder="Número da Sala" style="margin-bottom: 5px" />
                 <br />
                 <button class="custom-button" onclick="joinGame()">Entrar em Sala</button>
+            </div>
+
+            <div id="divGame">
+                <h3 id="idGameTitle">Jogo 0 [?]</h3>
+                <button class="game-button" id="idGameButton1" onclick="playGame(1)">_</button>
+                <button class="game-button" id="idGameButton2" onclick="playGame(2)">_</button>
+                <button class="game-button" id="idGameButton3" onclick="playGame(3)">_</button>
+                <br/>
+                <button class="game-button" id="idGameButton4" onclick="playGame(4)">_</button>
+                <button class="game-button" id="idGameButton5" onclick="playGame(5)">_</button>
+                <button class="game-button" id="idGameButton6" onclick="playGame(6)">_</button>
+                <br/>
+                <button class="game-button" id="idGameButton7" onclick="playGame(7)">_</button>
+                <button class="game-button" id="idGameButton8" onclick="playGame(8)">_</button>
+                <button class="game-button" id="idGameButton9" onclick="playGame(9)">_</button>
+                <h3 id="idGamePlayers">P1: ? | P2: ?</h3>
             </div>
         </center>
     </div>
@@ -120,7 +142,7 @@
                 response.json().then(responseJson => {
                     // alert('Sala ' + responseJson.id + ' criada com sucesso!');
 
-                    showGame(responseJson.id);
+                    showGame(responseJson);
                 });
             } else { // status de erro (entre 400 e 599)
                 response.text().then(text => {
@@ -135,7 +157,7 @@
     }
 
     function joinGame() {
-        const idGame = document.getElementById("idGame").value;
+        const idGame = document.getElementById("idGameNumber").value;
 
         if (!idGame) {
             alert('Número da Sala inválida!');
@@ -157,7 +179,7 @@
                 response.json().then(responseJson => {
                     // alert('Sala ' + responseJson.id + ' encontrada com sucesso!');
 
-                    showGame(responseJson.id);
+                    showGame(responseJson);
                 });
             } else { // status de erro (entre 400 e 599)
                 if (response.status == 400) {
@@ -166,19 +188,56 @@
                     alert('Sala não encontrada!');
                 } else {
                     response.text().then(text => {
-                        alert('Não foi possível encontrar a sala: ' + JSON.parse(text).error);
+                        alert('Não foi possível entrar na sala: ' + JSON.parse(text).error);
                     });
                 }
             }
         }).catch(error => {
-            alert('Erro ao encontrar sala: ' + error); // erros inesperados (não retornados pela API)
+            alert('Erro ao entrar na sala: ' + error); // erros inesperados (não retornados pela API)
         }).finally(() => {
             hideLoading();
         });
     }
 
-    function showGame(idGame) {
+    function playGame(position) {
+        const idGame = (document.getElementById("idGameTitle").innerHTML).split(' ')[1];
 
+        const data = {
+            id_player: getMyId(),
+            position: position
+        };
+
+        showLoading();
+
+        fetch(url + '/games/' + idGame + '/play', {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "application/json" }
+        }).then((response, error) => {
+            if (response.ok) { // status de sucesso (entre 200 e 299)
+                response.json().then(responseJson => {
+                    // alert('Jogada realizada com sucesso!');
+
+                    showGame(responseJson);
+                });
+            } else { // status de erro (entre 400 e 599)
+                if (response.status == 400) {
+                    alert('Jogada inválida!');
+                } else if (response.status == 404) {
+                    alert('Jogo não encontrado!');
+                } else if (response.status == 409) {
+                    alert('Essa posição já foi marcada!');
+                } else {
+                    response.text().then(text => {
+                        alert('Não foi possível realizar a jogada: ' + JSON.parse(text).error);
+                    });
+                }
+            }
+        }).catch(error => {
+            alert('Erro ao realizar jogada: ' + error); // erros inesperados (não retornados pela API)
+        }).finally(() => {
+            hideLoading();
+        });
     }
 
     function changeFlow() {
@@ -208,10 +267,49 @@
     function showAccountRegistration() {
         document.getElementById("divAccount").style.display = "inline";
         document.getElementById("divMainPage").style.display = "none";
+        document.getElementById("divGame").style.display = "none";
     }
 
     function showMainPage() {
         document.getElementById("divMainPage").style.display = "inline";
         document.getElementById("divAccount").style.display = "none";
+        document.getElementById("divGame").style.display = "none";
+    }
+
+    function showGame(game) {
+        document.getElementById("divGame").style.display = "inline";
+        document.getElementById("divAccount").style.display = "none";
+        document.getElementById("divMainPage").style.display = "none";
+
+        document.getElementById('idGameTitle').innerHTML = ("Jogo " + game.id + ' [' + parseGameStatus(game.status) + ']');
+
+        document.getElementById('idGameButton1').value = (!game.first_position ? '_' : game.first_position);
+        document.getElementById('idGameButton2').value = (!game.second_position ? '_' : game.second_position);
+        document.getElementById('idGameButton3').value = (!game.third_position ? '_' : game.third_position);
+
+        document.getElementById('idGameButton4').value = (!game.fourth_position ? '_' : game.fourth_position);
+        document.getElementById('idGameButton5').value = (!game.fifth_position ? '_' : game.fifth_position);
+        document.getElementById('idGameButton6').value = (!game.sixth_position ? '_' : game.sixth_position);
+
+        document.getElementById('idGameButton7').value = (!game.seventh_position ? '_' : game.seventh_position);
+        document.getElementById('idGameButton8').value = (!game.eighth_position ? '_' : game.eighth_position);
+        document.getElementById('idGameButton9').value = (!game.nineth_position ? '_' : game.nineth_position);
+
+        const firstPlayer = getFirstPlayer(game);
+        const secondPlayer = getSecondPlayer(game);
+
+        document.getElementById('idGamePlayers').innerHTML = ("P1: " + (firstPlayer ? firstPlayer.username : '?') + (firstPlayer && firstPlayer.turn ? ' <--' : '') + '<br/>' + 'P2: ' + (secondPlayer ? secondPlayer.username : '?') + (secondPlayer && secondPlayer.turn ? ' <--' : ''));
+    }
+
+    function parseGameStatus(gameStatus) {
+        return (gameStatus == 'CREATED' ? 'Criado' : (gameStatus == 'STARTED' ? 'Iniciado' : 'Finalizado'));
+    }
+
+    function getFirstPlayer(game) {
+        return (game.players.length >= 1 ? game.players[0] : null);
+    }
+
+    function getSecondPlayer(game) {
+        return (game.players.length >= 2 ? game.players[1] : null);
     }
 </script>
