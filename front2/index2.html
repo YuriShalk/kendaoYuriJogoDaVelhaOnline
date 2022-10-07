@@ -76,7 +76,7 @@
                 <button class="game-button" id="idGameButton8" onclick="playGame(8)">_</button>
                 <button class="game-button" id="idGameButton9" onclick="playGame(9)">_</button>
                 <h3 id="idGamePlayers">P1: ? | P2: ?</h3>
-                <button class="custom-button" onclick="exitGame()">Sair da Sala</button>
+                <button class="custom-button" onclick="resetFlow()">Sair da Sala</button>
             </div>
         </center>
     </div>
@@ -87,11 +87,19 @@
 <script>
     const url = 'http://kg-azevedo.ml/api/tictactoe';
 
-    updateFlow();
+    init();
 
-    setInterval(function () {
-        getGame();
-    }, 2500);
+    function init() {
+        resetFlow();
+
+        startGameLoop();
+    }
+
+    function startGameLoop() {
+        setInterval(function () {
+            getGame();
+        }, 2500);
+    }
 
     function createAccount() {
         const data = {
@@ -150,6 +158,8 @@
                 response.json().then(responseJson => {
                     // alert('Sala ' + responseJson.id + ' criada com sucesso!');
 
+                    localStorage.setItem('game-id', responseJson.id);
+
                     showGame(responseJson);
                 });
             } else { // status de erro (entre 400 e 599)
@@ -189,6 +199,8 @@
 
                     document.getElementById("idGameNumber").value = ''; // reset input value
 
+                    localStorage.setItem('game-id', responseJson.id);
+
                     showGame(responseJson);
                 });
             } else { // status de erro (entre 400 e 599)
@@ -210,7 +222,7 @@
     }
 
     function playGame(position) {
-        const idGame = (document.getElementById("idGameTitle").innerHTML).split(' ')[1];
+        const idGame = localStorage.getItem('game-id');
 
         if (!idGame || idGame == '0') {
             alert('Número do Jogo inválido!');
@@ -256,7 +268,7 @@
     }
 
     function getGame() {
-        const idGame = (document.getElementById("idGameTitle").innerHTML).split(' ')[1];
+        const idGame = localStorage.getItem('game-id');
 
         if (!idGame || idGame == '0') {
             return;
@@ -285,8 +297,9 @@
         });
     }
 
-    function exitGame() {
-        resetGame(); // prevent setInterval call get game
+    function resetFlow() {
+        localStorage.removeItem('game-id');
+
         updateFlow();
     }
 
@@ -330,14 +343,6 @@
         document.getElementById('idPlayerInfo').innerHTML = ("Olá " + localStorage.getItem('my-username') + ',' + '<br/>' + 'você ganhou ' + localStorage.getItem('my-wins') + ' vezes e perdeu ' + localStorage.getItem('my-losses') + ' vezes!');
 
         document.getElementById("idGameNumber").focus();
-    }
-
-    function resetGame() {
-        showGame({
-            id: 0,
-            status: '?',
-            players: []
-        });
     }
 
     function showGame(game) {
