@@ -1,0 +1,118 @@
+<style>
+    .middle {
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+    }
+
+    .loading {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.8) url("http://i.stack.imgur.com/FhHRx.gif") 50% 50% no-repeat;
+    }
+</style>
+
+<html>
+
+<head>
+    <title>tic tac toe</title>
+</head>
+
+<body>
+    <div id="idLoading" class="loading"></div>
+
+    <div class="middle">
+        <center>
+            <div id="divAccount">
+                <h3>Usuário</h3>
+                <input type="text" maxlength="50" id="idUsername" placeholder="João" />
+                <br />
+                <br />
+                <button onclick="createAccount()">Criar</button>
+            </div>
+
+            <div id="divGame">
+
+            </div>
+        </center>
+    </div>
+</body>
+
+</html>
+
+<script>
+    const url = 'http://kg-azevedo.ml/api/tictactoe';
+
+    changeFlow();
+
+    function createAccount() {
+        const data = {
+            username: document.getElementById("idUsername").value,
+        }
+
+        showLoading();
+
+        fetch(url + '/accounts', {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "application/json" }
+        }).then((response, error) => {
+            if (response.ok) { // status de sucesso (entre 200 e 299)
+                response.json().then(responseJson => {
+                    localStorage.setItem('my-id', responseJson.id);
+                    localStorage.setItem('my-username', responseJson.username);
+                    localStorage.setItem('my-wins', 0);
+                    localStorage.setItem('my-losses', 0);
+
+                    alert('Usuário cadastrado com sucesso!');
+
+                    changeFlow();
+                });
+            } else { // status de erro (entre 400 e 599)
+                if (response.status == 400) {
+                    alert('Nome de usuário inválido, insira outro!');
+                } else if (response.status == 409) {
+                    alert('Este nome de usuário já existe, insira outro!');
+                } else {
+                    response.text().then(text => {
+                        alert('Não foi possível cadastrar o usuário: ' + JSON.parse(text).error);
+                    });
+                }
+            }
+        }).catch(error => {
+            alert('Não foi possível cadastrar o usuário: ' + error); // erros inesperados (não retornados pela API)
+        }).finally(() => {
+            hideLoading();
+        });
+    }
+
+    function changeFlow() {
+        if (accountExists()) {
+            document.getElementById("divGame").style.display = "inline";
+            document.getElementById("divAccount").style.display = "none";
+        } else {
+            document.getElementById("divAccount").style.display = "inline";
+            document.getElementById("divGame").style.display = "none";
+        }
+    }
+
+    function showLoading() {
+        document.getElementById("idLoading").style.display = "inline";
+    }
+
+    function hideLoading() {
+        document.getElementById("idLoading").style.display = "none";
+    }
+
+    function accountExists() {
+        return (localStorage.getItem('my-id') != null);
+    }
+</script>
