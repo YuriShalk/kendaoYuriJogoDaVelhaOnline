@@ -323,22 +323,22 @@
 
         document.getElementById('idGameTitle').innerHTML = ("Jogo " + game.id + ' [' + parseGameStatus(game.status) + ']');
 
-        document.getElementById('idGameButton1').value = (!game.first_position ? '_' : game.first_position);
-        document.getElementById('idGameButton2').value = (!game.second_position ? '_' : game.second_position);
-        document.getElementById('idGameButton3').value = (!game.third_position ? '_' : game.third_position);
+        document.getElementById('idGameButton1').innerHTML = (!game.first_position ? '_' : game.first_position);
+        document.getElementById('idGameButton2').innerHTML = (!game.second_position ? '_' : game.second_position);
+        document.getElementById('idGameButton3').innerHTML = (!game.third_position ? '_' : game.third_position);
 
-        document.getElementById('idGameButton4').value = (!game.fourth_position ? '_' : game.fourth_position);
-        document.getElementById('idGameButton5').value = (!game.fifth_position ? '_' : game.fifth_position);
-        document.getElementById('idGameButton6').value = (!game.sixth_position ? '_' : game.sixth_position);
+        document.getElementById('idGameButton4').innerHTML = (!game.fourth_position ? '_' : game.fourth_position);
+        document.getElementById('idGameButton5').innerHTML = (!game.fifth_position ? '_' : game.fifth_position);
+        document.getElementById('idGameButton6').innerHTML = (!game.sixth_position ? '_' : game.sixth_position);
 
-        document.getElementById('idGameButton7').value = (!game.seventh_position ? '_' : game.seventh_position);
-        document.getElementById('idGameButton8').value = (!game.eighth_position ? '_' : game.eighth_position);
-        document.getElementById('idGameButton9').value = (!game.nineth_position ? '_' : game.nineth_position);
+        document.getElementById('idGameButton7').innerHTML = (!game.seventh_position ? '_' : game.seventh_position);
+        document.getElementById('idGameButton8').innerHTML = (!game.eighth_position ? '_' : game.eighth_position);
+        document.getElementById('idGameButton9').innerHTML = (!game.nineth_position ? '_' : game.nineth_position);
 
         const firstPlayer = getFirstPlayer(game);
         const secondPlayer = getSecondPlayer(game);
 
-        document.getElementById('idGamePlayers').innerHTML = ("P1: " + (firstPlayer ? firstPlayer.username : '?') + (firstPlayer && firstPlayer.turn ? ' <--' : '') + '<br/>' + 'P2: ' + (secondPlayer ? secondPlayer.username : '?') + (secondPlayer && secondPlayer.turn ? ' <--' : ''));
+        document.getElementById('idGamePlayers').innerHTML = ("P1: " + (firstPlayer ? firstPlayer.username : '?') + (firstPlayer && firstPlayer.turn ? ' <<<' : '') + '<br/>' + 'P2: ' + (secondPlayer ? secondPlayer.username : '?') + (secondPlayer && secondPlayer.turn ? ' <<<' : ''));
     }
 
     function parseGameStatus(gameStatus) {
