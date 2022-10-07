@@ -58,6 +58,7 @@
                 <input type="number" maxlength="12" id="idGameNumber" placeholder="Número da Sala" style="margin-bottom: 5px" />
                 <br />
                 <button class="custom-button" onclick="joinGame()">Entrar em Sala</button>
+                <h3 id="idPlayerInfo">Olá ?, você ganhou ? vezes e perdeu ? vezes!</h3>
             </div>
 
             <div id="divGame">
@@ -85,7 +86,7 @@
 <script>
     const url = 'http://kg-azevedo.ml/api/tictactoe';
 
-    changeFlow();
+    updateFlow();
 
     setInterval(function () {
         getGame();
@@ -112,7 +113,7 @@
 
                     alert('Usuário cadastrado com sucesso!');
 
-                    changeFlow();
+                    updateFlow();
                 });
             } else { // status de erro (entre 400 e 599)
                 if (response.status == 400) {
@@ -288,10 +289,10 @@
             players: []
         });
 
-        changeFlow();
+        updateFlow();
     }
 
-    function changeFlow() {
+    function updateFlow() {
         if (accountExists()) {
             showMainPage();
         } else {
@@ -325,6 +326,7 @@
         document.getElementById("divMainPage").style.display = "inline";
         document.getElementById("divAccount").style.display = "none";
         document.getElementById("divGame").style.display = "none";
+        document.getElementById('idPlayerInfo').innerHTML = ("Olá " + localStorage.getItem('my-username') + ',' + '<br/>' + 'você ganhou ' + localStorage.getItem('my-wins') + ' vezes e perdeu ' + localStorage.getItem('my-losses') + ' vezes!');
     }
 
     function showGame(game) {
