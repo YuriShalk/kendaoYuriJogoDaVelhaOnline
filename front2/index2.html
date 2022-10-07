@@ -38,7 +38,7 @@
             <h1>Tic Tac Toe</h1>
 
             <div id="divAccount">
-                <input type="text" maxlength="50" id="idUsername" placeholder="Usuário" />
+                <input type="text" maxlength="50" id="idUsername" placeholder="Nome de Usuário" />
                 <br />
                 <br />
                 <button class="custom-button" onclick="createAccount()">Criar Conta</button>
@@ -47,6 +47,8 @@
             <div id="divMainPage">
                 <button class="custom-button" onclick="createGame()">Criar Sala</button>
                 <br />
+                <br />
+                <input type="number" maxlength="12" id="idGame" placeholder="Número da Sala" style="margin-bottom: 5px" />
                 <br />
                 <button class="custom-button" onclick="joinGame()">Entrar em Sala</button>
             </div>
@@ -116,23 +118,66 @@
         }).then((response, error) => {
             if (response.ok) { // status de sucesso (entre 200 e 299)
                 response.json().then(responseJson => {
-                    alert('Jogo ' + responseJson.id + ' criado com sucesso!');
+                    // alert('Sala ' + responseJson.id + ' criada com sucesso!');
 
-                    changeFlow();
+                    showGame(responseJson.id);
                 });
             } else { // status de erro (entre 400 e 599)
                 response.text().then(text => {
-                    alert('Não foi possível criar o jogo: ' + JSON.parse(text).error);
+                    alert('Não foi possível criar a sala: ' + JSON.parse(text).error);
                 });
             }
         }).catch(error => {
-            alert('Erro ao criar jogo: ' + error); // erros inesperados (não retornados pela API)
+            alert('Erro ao criar sala: ' + error); // erros inesperados (não retornados pela API)
         }).finally(() => {
             hideLoading();
         });
     }
 
     function joinGame() {
+        const idGame = document.getElementById("idGame").value;
+
+        if (!idGame) {
+            alert('Número da Sala inválida!');
+            return;
+        }
+
+        const data = {
+            id_player: getMyId()
+        };
+
+        showLoading();
+
+        fetch(url + '/games/' + idGame + '/join', {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "application/json" }
+        }).then((response, error) => {
+            if (response.ok) { // status de sucesso (entre 200 e 299)
+                response.json().then(responseJson => {
+                    // alert('Sala ' + responseJson.id + ' encontrada com sucesso!');
+
+                    showGame(responseJson.id);
+                });
+            } else { // status de erro (entre 400 e 599)
+                if (response.status == 400) {
+                    alert('Número da Sala inválida!');
+                } else if (response.status == 404) {
+                    alert('Sala não encontrada!');
+                } else {
+                    response.text().then(text => {
+                        alert('Não foi possível encontrar a sala: ' + JSON.parse(text).error);
+                    });
+                }
+            }
+        }).catch(error => {
+            alert('Erro ao encontrar sala: ' + error); // erros inesperados (não retornados pela API)
+        }).finally(() => {
+            hideLoading();
+        });
+    }
+
+    function showGame(idGame) {
 
     }
 
