@@ -367,7 +367,12 @@
         const firstPlayer = getFirstPlayer(game);
         const secondPlayer = getSecondPlayer(game);
 
-        document.getElementById('idGamePlayers').innerHTML = ("P1: " + (firstPlayer ? firstPlayer.username : '?') + (firstPlayer && firstPlayer.turn ? ' <<<' : '') + '<br/>' + 'P2: ' + (secondPlayer ? secondPlayer.username : '?') + (secondPlayer && secondPlayer.turn ? ' <<<' : ''));
+        let playersInfo = '';
+        playersInfo = playersInfo + ((firstPlayer && firstPlayer.turn ? '> ' : '') + (firstPlayer ? firstPlayer.username : '?') + ' [X]');
+        playersInfo = playersInfo + '<br />';
+        playersInfo = playersInfo + ((secondPlayer && secondPlayer.turn ? '> ' : '') + (secondPlayer ? secondPlayer.username : '?') + ' [O]');
+
+        document.getElementById('idGamePlayers').innerHTML = playersInfo;
     }
 
     function parseGameStatus(gameStatus) {
