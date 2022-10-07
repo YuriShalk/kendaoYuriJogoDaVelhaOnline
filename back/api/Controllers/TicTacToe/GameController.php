@@ -335,6 +335,17 @@ class GameController extends Controller
                 $game->status = 'DONE';
             }
 
+            // draw game
+            if (
+                $game->status != 'DONE' && (
+                    $game->first_position && $game->second_position && $game->third_position &&
+                    $game->fourth_position && $game->fifth_position && $game->sixth_position &&
+                    $game->seventh_position && $game->eighth_position && $game->nineth_position
+                )
+            ) {
+                $game->status = 'DONE';
+            }
+
             // change turn when game is not DONE
             if ($game->status != 'DONE') {
                 $game->turn = ($game->turn == 'OWNER' ? 'GUEST' : 'OWNER');
@@ -348,8 +359,8 @@ class GameController extends Controller
 
             $owner = Account::find($game->id_owner);
 
-            // update player
-            if ($game->status == 'DONE') {
+            // update owner player
+            if ($game->id_winner != null) {
                 if ($owner->id == $game->id_winner) {
                     $owner->wins = ($owner->wins + 1);
                 } else {
@@ -370,8 +381,8 @@ class GameController extends Controller
 
             $guest = Account::find($game->id_guest);
 
-            // update player
-            if ($game->status == 'DONE') {
+            // update guest player
+            if ($game->id_winner != null) {
                 if ($guest->id == $game->id_winner) {
                     $guest->wins = ($guest->wins + 1);
                 } else {

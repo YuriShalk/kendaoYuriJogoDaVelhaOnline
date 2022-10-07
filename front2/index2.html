@@ -318,6 +318,8 @@
         document.getElementById("divAccount").style.display = "inline";
         document.getElementById("divMainPage").style.display = "none";
         document.getElementById("divGame").style.display = "none";
+
+        document.getElementById("idUsername").focus();
     }
 
     function showMainPage() {
@@ -326,6 +328,8 @@
         document.getElementById("divGame").style.display = "none";
 
         document.getElementById('idPlayerInfo').innerHTML = ("Olá " + localStorage.getItem('my-username') + ',' + '<br/>' + 'você ganhou ' + localStorage.getItem('my-wins') + ' vezes e perdeu ' + localStorage.getItem('my-losses') + ' vezes!');
+
+        document.getElementById("idGameNumber").focus();
     }
 
     function resetGame() {
