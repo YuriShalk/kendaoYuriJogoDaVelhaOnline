@@ -55,7 +55,8 @@
                 <button class="custom-button" onclick="createGame()">Criar Sala</button>
                 <br />
                 <br />
-                <input type="number" maxlength="12" id="idGameNumber" placeholder="Número da Sala" style="margin-bottom: 5px" />
+                <input type="number" maxlength="12" id="idGameNumber" placeholder="Número da Sala"
+                    style="margin-bottom: 5px" />
                 <br />
                 <button class="custom-button" onclick="joinGame()">Entrar em Sala</button>
                 <h3 id="idPlayerInfo">Olá ?, você ganhou ? vezes e perdeu ? vezes!</h3>
@@ -66,11 +67,11 @@
                 <button class="game-button" id="idGameButton1" onclick="playGame(1)">_</button>
                 <button class="game-button" id="idGameButton2" onclick="playGame(2)">_</button>
                 <button class="game-button" id="idGameButton3" onclick="playGame(3)">_</button>
-                <br/>
+                <br />
                 <button class="game-button" id="idGameButton4" onclick="playGame(4)">_</button>
                 <button class="game-button" id="idGameButton5" onclick="playGame(5)">_</button>
                 <button class="game-button" id="idGameButton6" onclick="playGame(6)">_</button>
-                <br/>
+                <br />
                 <button class="game-button" id="idGameButton7" onclick="playGame(7)">_</button>
                 <button class="game-button" id="idGameButton8" onclick="playGame(8)">_</button>
                 <button class="game-button" id="idGameButton9" onclick="playGame(9)">_</button>
@@ -186,6 +187,8 @@
                 response.json().then(responseJson => {
                     // alert('Sala ' + responseJson.id + ' encontrada com sucesso!');
 
+                    document.getElementById("idGameNumber").value = ''; // reset input value
+
                     showGame(responseJson);
                 });
             } else { // status de erro (entre 400 e 599)
@@ -283,12 +286,7 @@
     }
 
     function exitGame() {
-        showGame({
-            id: 0,
-            status: '?',
-            players: []
-        });
-
+        resetGame(); // prevent setInterval call get game
         updateFlow();
     }
 
@@ -326,7 +324,16 @@
         document.getElementById("divMainPage").style.display = "inline";
         document.getElementById("divAccount").style.display = "none";
         document.getElementById("divGame").style.display = "none";
+
         document.getElementById('idPlayerInfo').innerHTML = ("Olá " + localStorage.getItem('my-username') + ',' + '<br/>' + 'você ganhou ' + localStorage.getItem('my-wins') + ' vezes e perdeu ' + localStorage.getItem('my-losses') + ' vezes!');
+    }
+
+    function resetGame() {
+        showGame({
+            id: 0,
+            status: '?',
+            players: []
+        });
     }
 
     function showGame(game) {
