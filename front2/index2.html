@@ -63,8 +63,8 @@
 
     function createAccount() {
         const data = {
-            username: document.getElementById("idUsername").value,
-        }
+            username: document.getElementById("idUsername").value
+        };
 
         showLoading();
 
@@ -103,7 +103,33 @@
     }
 
     function createGame() {
+        const data = {
+            id_player: getMyId()
+        };
 
+        showLoading();
+
+        fetch(url + '/games/create', {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "application/json" }
+        }).then((response, error) => {
+            if (response.ok) { // status de sucesso (entre 200 e 299)
+                response.json().then(responseJson => {
+                    alert('Jogo ' + responseJson.id + ' criado com sucesso!');
+
+                    changeFlow();
+                });
+            } else { // status de erro (entre 400 e 599)
+                response.text().then(text => {
+                    alert('Não foi possível criar o jogo: ' + JSON.parse(text).error);
+                });
+            }
+        }).catch(error => {
+            alert('Erro ao criar jogo: ' + error); // erros inesperados (não retornados pela API)
+        }).finally(() => {
+            hideLoading();
+        });
     }
 
     function joinGame() {
@@ -127,7 +153,11 @@
     }
 
     function accountExists() {
-        return (localStorage.getItem('my-id') != null);
+        return (getMyId() != null);
+    }
+
+    function getMyId() {
+        return localStorage.getItem('my-id');
     }
 
     function showAccountRegistration() {
