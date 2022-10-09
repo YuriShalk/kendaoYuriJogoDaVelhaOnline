@@ -373,6 +373,10 @@
         playersInfo = playersInfo + ((secondPlayer && secondPlayer.turn ? '> ' : '') + (secondPlayer ? secondPlayer.username : '?') + ' [O]');
 
         document.getElementById('idGamePlayers').innerHTML = playersInfo;
+
+        if (game.status == 'DONE') {
+            localStorage.removeItem('game-id');
+        }
     }
 
     function parseGameStatus(gameStatus) {
