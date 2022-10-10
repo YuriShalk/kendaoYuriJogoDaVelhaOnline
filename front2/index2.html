@@ -327,6 +327,10 @@
         return localStorage.getItem('my-id');
     }
 
+    function getMyUsername() {
+        return localStorage.getItem('my-username');
+    }
+
     function showAccountRegistration() {
         document.getElementById("divAccount").style.display = "inline";
         document.getElementById("divMainPage").style.display = "none";
@@ -350,7 +354,7 @@
         document.getElementById("divAccount").style.display = "none";
         document.getElementById("divMainPage").style.display = "none";
 
-        document.getElementById('idGameTitle').innerHTML = ("Jogo " + game.id + ' [' + parseGameStatus(game.status) + ']');
+        document.getElementById('idGameTitle').innerHTML = getGameInfo(game);
 
         document.getElementById('idGameButton1').innerHTML = (!game.first_position ? '_' : game.first_position);
         document.getElementById('idGameButton2').innerHTML = (!game.second_position ? '_' : game.second_position);
@@ -364,19 +368,60 @@
         document.getElementById('idGameButton8').innerHTML = (!game.eighth_position ? '_' : game.eighth_position);
         document.getElementById('idGameButton9').innerHTML = (!game.nineth_position ? '_' : game.nineth_position);
 
+        document.getElementById('idGamePlayers').innerHTML = getPlayersInfo(game);
+
+        finalizedGameValidations(game);
+    }
+
+    function getGameInfo(game) {
+        let gameInfo = '';
+        gameInfo = gameInfo + ("Jogo " + game.id);
+        gameInfo = gameInfo + '<br />';
+        gameInfo = gameInfo + (parseGameStatus(game.status) + ' [' + getWinnerInfo(game) + ']');
+        return gameInfo;
+    }
+
+    function getPlayersInfo(game) {
         const firstPlayer = getFirstPlayer(game);
         const secondPlayer = getSecondPlayer(game);
 
         let playersInfo = '';
-        playersInfo = playersInfo + ((firstPlayer && firstPlayer.turn ? '> ' : '') + (firstPlayer ? firstPlayer.username : '?') + ' [X]');
+        playersInfo = playersInfo + ((firstPlayer && firstPlayer.turn ? '=> ' : '') + (firstPlayer ? firstPlayer.username : '?') + ' [X]');
         playersInfo = playersInfo + '<br />';
-        playersInfo = playersInfo + ((secondPlayer && secondPlayer.turn ? '> ' : '') + (secondPlayer ? secondPlayer.username : '?') + ' [O]');
+        playersInfo = playersInfo + ((secondPlayer && secondPlayer.turn ? '=> ' : '') + (secondPlayer ? secondPlayer.username : '?') + ' [O]');
+        return playersInfo;
+    }
 
-        document.getElementById('idGamePlayers').innerHTML = playersInfo;
-
+    function finalizedGameValidations(game) {
         if (game.status == 'DONE') {
             localStorage.removeItem('game-id');
+
+            const firstPlayer = getFirstPlayer(game);
+            const secondPlayer = getSecondPlayer(game);
+
+            if (firstPlayer.username == getMyUsername()) {
+                localStorage.setItem('my-wins', firstPlayer.wins);
+                localStorage.setItem('my-losses', firstPlayer.losses);
+            }
+
+            if (secondPlayer.username == getMyUsername()) {
+                localStorage.setItem('my-wins', secondPlayer.wins);
+                localStorage.setItem('my-losses', secondPlayer.losses);
+            }
         }
+    }
+
+    function getWinnerInfo(game) {
+        const firstPlayer = getFirstPlayer(game);
+        const secondPlayer = getSecondPlayer(game);
+
+        return (
+            game.status != 'DONE' ? 'Sem Ganhador' : (
+                firstPlayer && firstPlayer.winner ? (firstPlayer.username + ' ganhou!') : (
+                    secondPlayer && secondPlayer.winner ? (secondPlayer.username + ' ganhou!') : 'Deu Velha!'
+                )
+            )
+        );
     }
 
     function parseGameStatus(gameStatus) {
