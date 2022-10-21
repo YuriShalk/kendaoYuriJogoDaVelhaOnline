@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" type="text/css" href="css/estilos.css" />
 	<title>Jogo da Velha Online</title>
+	<input id="idUsername"/>
+	
+	<button onclick="criaUsuario()">LogIn</button>
 </head>
+
 <body>
 	<div class="container">
 		<h2>Jogo da Velha Online</h2>
@@ -22,26 +27,8 @@
 		</div>
 	</div>
 
-	<script>
-		//Etapa 1:
-
-		const idLocal = localStorage.getItem("id");
-
-		function getID(){
-			fetch('http://kg-azevedo.ml/api/tictactoe/accounts/b194f312-3f2d-11ed-a4a5-ac1f6b8b5c42')
-				.then(function(response){
-					return response.json();
-				})
-				.then(function(data){
-					console.log(data.id);
-				});
-		}
-
-		
-
-		
-		
-	</script>
-
 </body>
+
 </html>
+
+<script src="script/modelo.js"></script>
