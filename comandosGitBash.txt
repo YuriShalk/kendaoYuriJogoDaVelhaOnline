@@ -1,0 +1,13 @@
+Comandos do git bash
+
+	git status
+	
+	git add front/index.html
+
+	git commit -m "test"
+
+	git push
+
+=================================
+
+	git pull

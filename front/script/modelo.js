@@ -46,13 +46,3 @@ function getInputUsername() {
     return document.getElementById("idUsername");
 }
 
-
-getUsuario => {
-    fetch('http://kg-azevedo.ml/api/tictactoe/accounts/b194f312-3f2d-11ed-a4a5-ac1f6b8b5c42')
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (data) {
-            console.log(data.username);
-        });
-}
