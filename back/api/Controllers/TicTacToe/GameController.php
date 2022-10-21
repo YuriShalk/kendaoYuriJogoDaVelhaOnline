@@ -35,6 +35,8 @@ class GameController extends Controller
 
             // set and hide values
 
+            $game['draw'] = ($game->status == 'DONE' ? ($game->id_winner ? false : true) : null)
+
             $players = [];
 
             if ($game->id_owner) {
@@ -104,6 +106,8 @@ class GameController extends Controller
             $game->save();
 
             // set and hide values
+
+            $game['draw'] = ($game->status == 'DONE' ? ($game->id_winner ? false : true) : null)
 
             $players = [];
 
@@ -181,6 +185,8 @@ class GameController extends Controller
             }
 
             // set and hide values
+
+            $game['draw'] = ($game->status == 'DONE' ? ($game->id_winner ? false : true) : null)
 
             $players = [];
 
@@ -354,6 +360,8 @@ class GameController extends Controller
             $game->save();
 
             // set and hide values
+
+            $game['draw'] = ($game->status == 'DONE' ? ($game->id_winner ? false : true) : null)
 
             $players = [];
 

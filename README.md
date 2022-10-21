@@ -217,6 +217,7 @@ Responses:
     "eighth_position": null,
     "nineth_position": null,
     "status": "STARTED",
+    "draw": null,
     "players": [
         {
             "username": "kendao",
@@ -280,6 +281,7 @@ Responses:
     "eighth_position": null,
     "nineth_position": null,
     "status": "STARTED",
+    "draw": null,
     "players": [
         {
             "username": "kendao",
@@ -337,6 +339,7 @@ Responses:
     "eighth_position": null,
     "nineth_position": null,
     "status": "DONE",
+    "draw": false,
     "players": [
         {
             "username": "kendao",
