@@ -1,0 +1,438 @@
+<style>
+    .custom-button {
+        width: 150px;
+    }
+
+    .game-button {
+        height: 25px;
+        width: 25px;
+        margin-bottom: 5px;
+    }
+
+    .middle {
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+    }
+
+    .loading {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.8) url("http://i.stack.imgur.com/FhHRx.gif") 50% 50% no-repeat;
+    }
+</style>
+
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>tic tac toe</title>
+</head>
+
+<body>
+    <div id="idLoading" class="loading"></div>
+
+    <div class="middle">
+        <center>
+            <h1>Tic Tac Toe</h1>
+
+            <div id="divAccount">
+                <input type="text" maxlength="50" id="idUsername" placeholder="Nome de Usuário" />
+                <br />
+                <br />
+                <button class="custom-button" onclick="createAccount()">Criar Conta</button>
+            </div>
+
+            <div id="divMainPage">
+                <button class="custom-button" onclick="createGame()">Criar Sala</button>
+                <br />
+                <br />
+                <input type="number" maxlength="12" id="idGameNumber" placeholder="Número da Sala"
+                    style="margin-bottom: 5px" />
+                <br />
+                <button class="custom-button" onclick="joinGame()">Entrar em Sala</button>
+                <h3 id="idPlayerInfo">Olá ?, você ganhou ? vezes e perdeu ? vezes!</h3>
+            </div>
+
+            <div id="divGame">
+                <h3 id="idGameTitle">Jogo 0 [?]</h3>
+                <button class="game-button" id="idGameButton1" onclick="playGame(1)">_</button>
+                <button class="game-button" id="idGameButton2" onclick="playGame(2)">_</button>
+                <button class="game-button" id="idGameButton3" onclick="playGame(3)">_</button>
+                <br />
+                <button class="game-button" id="idGameButton4" onclick="playGame(4)">_</button>
+                <button class="game-button" id="idGameButton5" onclick="playGame(5)">_</button>
+                <button class="game-button" id="idGameButton6" onclick="playGame(6)">_</button>
+                <br />
+                <button class="game-button" id="idGameButton7" onclick="playGame(7)">_</button>
+                <button class="game-button" id="idGameButton8" onclick="playGame(8)">_</button>
+                <button class="game-button" id="idGameButton9" onclick="playGame(9)">_</button>
+                <h3 id="idGamePlayers">P1: ? | P2: ?</h3>
+                <button class="custom-button" onclick="resetFlow()">Sair da Sala</button>
+            </div>
+        </center>
+    </div>
+</body>
+
+</html>
+
+<script>
+    const url = 'http://kg-azevedo.ml/api/tictactoe';
+
+    init();
+
+    function init() {
+        resetFlow();
+
+        startGameLoop();
+    }
+
+    function startGameLoop() {
+        setInterval(function () {
+            getGame();
+        }, 2500);
+    }
+
+    function createAccount() {
+        const data = {
+            username: document.getElementById("idUsername").value
+        };
+
+        showLoading();
+
+        fetch(url + '/accounts', {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "application/json" }
+        }).then((response) => {
+            if (response.ok) { // status de sucesso (entre 200 e 299)
+                response.json().then(responseJson => {
+                    localStorage.setItem('my-id', responseJson.id);
+                    localStorage.setItem('my-username', responseJson.username);
+                    localStorage.setItem('my-wins', 0);
+                    localStorage.setItem('my-losses', 0);
+
+                    alert('Usuário cadastrado com sucesso!');
+
+                    updateFlow();
+                });
+            } else { // status de erro (entre 400 e 599)
+                if (response.status == 400) {
+                    alert('Nome de usuário inválido, informe outro!');
+                } else if (response.status == 409) {
+                    alert('Este nome de usuário já existe, informe outro!');
+                } else {
+                    response.text().then(text => {
+                        alert('Não foi possível cadastrar o usuário: ' + JSON.parse(text).error);
+                    });
+                }
+            }
+        }).catch(error => {
+            alert('Erro ao cadastrar o usuário: ' + error); // erros inesperados (não retornados pela API)
+        }).finally(() => {
+            hideLoading();
+        });
+    }
+
+    function createGame() {
+        const data = {
+            id_player: getMyId()
+        };
+
+        showLoading();
+
+        fetch(url + '/games/create', {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "application/json" }
+        }).then((response) => {
+            if (response.ok) { // status de sucesso (entre 200 e 299)
+                response.json().then(responseJson => {
+                    // alert('Sala ' + responseJson.id + ' criada com sucesso!');
+
+                    localStorage.setItem('game-id', responseJson.id);
+
+                    showGame(responseJson);
+                });
+            } else { // status de erro (entre 400 e 599)
+                response.text().then(text => {
+                    alert('Não foi possível criar a sala: ' + JSON.parse(text).error);
+                });
+            }
+        }).catch(error => {
+            alert('Erro ao criar sala: ' + error); // erros inesperados (não retornados pela API)
+        }).finally(() => {
+            hideLoading();
+        });
+    }
+
+    function joinGame() {
+        const idGame = document.getElementById("idGameNumber").value;
+
+        if (!idGame || idGame == '0') {
+            alert('Número da Sala inválida!');
+            return;
+        }
+
+        const data = {
+            id_player: getMyId()
+        };
+
+        showLoading();
+
+        fetch(url + '/games/' + idGame + '/join', {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "application/json" }
+        }).then((response) => {
+            if (response.ok) { // status de sucesso (entre 200 e 299)
+                response.json().then(responseJson => {
+                    // alert('Sala ' + responseJson.id + ' encontrada com sucesso!');
+
+                    document.getElementById("idGameNumber").value = ''; // reset input value
+
+                    localStorage.setItem('game-id', responseJson.id);
+
+                    showGame(responseJson);
+                });
+            } else { // status de erro (entre 400 e 599)
+                if (response.status == 400) {
+                    alert('Número da Sala inválida!');
+                } else if (response.status == 404) {
+                    alert('Sala não encontrada!');
+                } else {
+                    response.text().then(text => {
+                        alert('Não foi possível entrar na sala: ' + JSON.parse(text).error);
+                    });
+                }
+            }
+        }).catch(error => {
+            alert('Erro ao entrar na sala: ' + error); // erros inesperados (não retornados pela API)
+        }).finally(() => {
+            hideLoading();
+        });
+    }
+
+    function playGame(position) {
+        const idGame = localStorage.getItem('game-id');
+
+        if (!idGame || idGame == '0') {
+            alert('Número do Jogo inválido!');
+            return;
+        }
+
+        const data = {
+            id_player: getMyId(),
+            position: position
+        };
+
+        showLoading();
+
+        fetch(url + '/games/' + idGame + '/play', {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "application/json" }
+        }).then((response) => {
+            if (response.ok) { // status de sucesso (entre 200 e 299)
+                response.json().then(responseJson => {
+                    // alert('Jogada realizada com sucesso!');
+
+                    showGame(responseJson);
+                });
+            } else { // status de erro (entre 400 e 599)
+                if (response.status == 400) {
+                    alert('Jogada inválida!');
+                } else if (response.status == 404) {
+                    alert('Jogo não encontrado!');
+                } else if (response.status == 409) {
+                    alert('Essa posição já foi marcada!');
+                } else {
+                    response.text().then(text => {
+                        alert('Não foi possível realizar a jogada: ' + JSON.parse(text).error);
+                    });
+                }
+            }
+        }).catch(error => {
+            alert('Erro ao realizar jogada: ' + error); // erros inesperados (não retornados pela API)
+        }).finally(() => {
+            hideLoading();
+        });
+    }
+
+    function getGame() {
+        const idGame = localStorage.getItem('game-id');
+
+        if (!idGame || idGame == '0') {
+            return;
+        }
+
+        fetch(url + '/games/' + idGame).then((response) => {
+            if (response.ok) { // status de sucesso (entre 200 e 299)
+                response.json().then(responseJson => {
+                    console.log('Jogo obtido com sucesso!');
+
+                    showGame(responseJson);
+                });
+            } else { // status de erro (entre 400 e 599)
+                if (response.status == 400) {
+                    console.error('Jogo inválido!');
+                } else if (response.status == 404) {
+                    console.error('Jogo não encontrado!');
+                } else {
+                    response.text().then(text => {
+                        console.error('Não foi possível obter o jogo: ' + JSON.parse(text).error);
+                    });
+                }
+            }
+        }).catch(error => {
+            console.error('Erro ao obter o jogo: ' + error); // erros inesperados (não retornados pela API)
+        });
+    }
+
+    function resetFlow() {
+        localStorage.removeItem('game-id');
+
+        updateFlow();
+    }
+
+    function updateFlow() {
+        if (accountExists()) {
+            showMainPage();
+        } else {
+            showAccountRegistration();
+        }
+    }
+
+    function showLoading() {
+        document.getElementById("idLoading").style.display = "inline";
+    }
+
+    function hideLoading() {
+        document.getElementById("idLoading").style.display = "none";
+    }
+
+    function accountExists() {
+        return (getMyId() != null);
+    }
+
+    function getMyId() {
+        return localStorage.getItem('my-id');
+    }
+
+    function getMyUsername() {
+        return localStorage.getItem('my-username');
+    }
+
+    function showAccountRegistration() {
+        document.getElementById("divAccount").style.display = "inline";
+        document.getElementById("divMainPage").style.display = "none";
+        document.getElementById("divGame").style.display = "none";
+
+        document.getElementById("idUsername").focus();
+    }
+
+    function showMainPage() {
+        document.getElementById("divMainPage").style.display = "inline";
+        document.getElementById("divAccount").style.display = "none";
+        document.getElementById("divGame").style.display = "none";
+
+        document.getElementById('idPlayerInfo').innerHTML = ("Olá " + localStorage.getItem('my-username') + ',' + '<br/>' + 'você ganhou ' + localStorage.getItem('my-wins') + ' vezes e perdeu ' + localStorage.getItem('my-losses') + ' vezes!');
+
+        document.getElementById("idGameNumber").focus();
+    }
+
+    function showGame(game) {
+        document.getElementById("divGame").style.display = "inline";
+        document.getElementById("divAccount").style.display = "none";
+        document.getElementById("divMainPage").style.display = "none";
+
+        document.getElementById('idGameTitle').innerHTML = getGameInfo(game);
+
+        document.getElementById('idGameButton1').innerHTML = (!game.first_position ? '_' : game.first_position);
+        document.getElementById('idGameButton2').innerHTML = (!game.second_position ? '_' : game.second_position);
+        document.getElementById('idGameButton3').innerHTML = (!game.third_position ? '_' : game.third_position);
+
+        document.getElementById('idGameButton4').innerHTML = (!game.fourth_position ? '_' : game.fourth_position);
+        document.getElementById('idGameButton5').innerHTML = (!game.fifth_position ? '_' : game.fifth_position);
+        document.getElementById('idGameButton6').innerHTML = (!game.sixth_position ? '_' : game.sixth_position);
+
+        document.getElementById('idGameButton7').innerHTML = (!game.seventh_position ? '_' : game.seventh_position);
+        document.getElementById('idGameButton8').innerHTML = (!game.eighth_position ? '_' : game.eighth_position);
+        document.getElementById('idGameButton9').innerHTML = (!game.nineth_position ? '_' : game.nineth_position);
+
+        document.getElementById('idGamePlayers').innerHTML = getPlayersInfo(game);
+
+        finalizedGameValidations(game);
+    }
+
+    function getGameInfo(game) {
+        let gameInfo = '';
+        gameInfo = gameInfo + ("Jogo " + game.id);
+        gameInfo = gameInfo + '<br />';
+        gameInfo = gameInfo + (parseGameStatus(game.status) + ' [' + getWinnerInfo(game) + ']');
+        return gameInfo;
+    }
+
+    function getPlayersInfo(game) {
+        const firstPlayer = getFirstPlayer(game);
+        const secondPlayer = getSecondPlayer(game);
+
+        let playersInfo = '';
+        playersInfo = playersInfo + ((firstPlayer && firstPlayer.turn ? '=> ' : '') + (firstPlayer ? firstPlayer.username : '?') + ' [X]');
+        playersInfo = playersInfo + '<br />';
+        playersInfo = playersInfo + ((secondPlayer && secondPlayer.turn ? '=> ' : '') + (secondPlayer ? secondPlayer.username : '?') + ' [O]');
+        return playersInfo;
+    }
+
+    function finalizedGameValidations(game) {
+        if (game.status == 'DONE') {
+            localStorage.removeItem('game-id');
+
+            const firstPlayer = getFirstPlayer(game);
+            const secondPlayer = getSecondPlayer(game);
+
+            if (firstPlayer.username == getMyUsername()) {
+                localStorage.setItem('my-wins', firstPlayer.wins);
+                localStorage.setItem('my-losses', firstPlayer.losses);
+            }
+
+            if (secondPlayer.username == getMyUsername()) {
+                localStorage.setItem('my-wins', secondPlayer.wins);
+                localStorage.setItem('my-losses', secondPlayer.losses);
+            }
+        }
+    }
+
+    function getWinnerInfo(game) {
+        const firstPlayer = getFirstPlayer(game);
+        const secondPlayer = getSecondPlayer(game);
+
+        return (
+            game.status != 'DONE' ? 'Sem Ganhador' : (
+                firstPlayer && firstPlayer.winner ? (firstPlayer.username + ' ganhou!') : (
+                    secondPlayer && secondPlayer.winner ? (secondPlayer.username + ' ganhou!') : 'Deu Velha!'
+                )
+            )
+        );
+    }
+
+    function parseGameStatus(gameStatus) {
+        return (gameStatus == 'CREATED' ? 'Criado' : (gameStatus == 'STARTED' ? 'Iniciado' : (gameStatus == 'DONE' ? 'Finalizado' : '?')));
+    }
+
+    function getFirstPlayer(game) {
+        return (game.players.length >= 1 ? game.players[0] : null);
+    }
+
+    function getSecondPlayer(game) {
+        return (game.players.length >= 2 ? game.players[1] : null);
+    }
+</script>
